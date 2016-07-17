@@ -7,10 +7,8 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import javax.servlet.*;
 
-
 @Order(1)
-public class WebInitializer extends
-        AbstractAnnotationConfigDispatcherServletInitializer {
+public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -19,7 +17,7 @@ public class WebInitializer extends
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] { null };
+        return new Class[] { AppConfig.class };
     }
 
     @Override

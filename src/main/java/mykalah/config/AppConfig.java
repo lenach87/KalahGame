@@ -3,32 +3,20 @@ package mykalah.config;
 import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-
 import java.util.Properties;
-
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
-
-//import mykalah.config.DataConfiguration;
-
-//import org.springframework.data.repository.support.DomainClassConverter;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan({"mykalah.mvc, mykalah.data, mykalah.service"})
+@ComponentScan({"mykalah.mvc, mykalah.data, mykalah.service, mykalah.config"})
 @EnableJpaRepositories (basePackages = "mykalah.data")
-
 public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Bean(name = "myDataSource")
@@ -37,7 +25,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
         driverManagerDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mykalah?useUnicode=true&amp;characterEncoding=UTF8&amp;characterSetResults=UTF-8");
         driverManagerDataSource.setUsername("root");
-        driverManagerDataSource.setPassword("test");
+        driverManagerDataSource.setPassword("5452");
         return driverManagerDataSource;
     }
 
@@ -66,22 +54,13 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager txManager = new JpaTransactionManager();
-        txManager.setEntityManagerFactory(entityManagerFactory().getObject());
-        return txManager;
-    }
+    public ViewResolver viewResolver() {
 
-
-    @Bean
-    public UrlBasedViewResolver setupViewResolver() {
-        UrlBasedViewResolver resolver = new UrlBasedViewResolver();
-        resolver.setContentType("text/html;charset=UTF-8");
-        resolver.setPrefix("WEB-INF/pages/");
-        resolver.setSuffix(".jsp");
-        resolver.setViewClass(JstlView.class);
-        resolver.setOrder(1);
-        return resolver;
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setViewClass(JstlView.class);
+        viewResolver.setPrefix("WEB-INF/pages/");
+        viewResolver.setSuffix(".jsp");
+        return viewResolver;
     }
 
     @Override

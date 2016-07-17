@@ -11,5 +11,5 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     Player findPlayerByName(String username);
 
-    void delete (long id);
+//    void delete (long id);
 }

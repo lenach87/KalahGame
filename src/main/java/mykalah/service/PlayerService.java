@@ -9,9 +9,7 @@ import mykalah.data.Kalah;
 import mykalah.data.Pit;
 import mykalah.data.Player;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import mykalah.data.PlayerRepository;
 
@@ -34,11 +32,11 @@ public class PlayerService
         return playerRepository.findPlayerByName(username);
     }
 
-    public Player findOne (Long id) {return playerRepository.findOne(id);}
+    public Player findOne (long id) {return playerRepository.findOne(id);}
 
-    public void deletePlayer (Long id) {
-        playerRepository.delete(id);
-    }
+ //   public void delete (long id) {
+ //       playerRepository.delete(id);
+ //   }
 
     public Player createNewPlayer (String name) {
         if (playerRepository.findPlayerByName(name)!=null) {

@@ -19,7 +19,7 @@ public class GameService {
     @Autowired
     private PlayerService playerService;
 
-    public Game findOne (long id) {
+    public Game findOne (Long id) {
         return gameRepository.findOne(id);
     }
 

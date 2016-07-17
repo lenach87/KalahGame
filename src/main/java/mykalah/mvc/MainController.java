@@ -29,6 +29,13 @@ public class MainController {
 		this.gameService = gameService;
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView startpage() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("index");
+		return model;
+	}
+
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView index() {
 		ModelAndView model = new ModelAndView();
@@ -38,8 +45,8 @@ public class MainController {
 
 	@RequestMapping(value = "/index", method = RequestMethod.POST)
 	public ModelAndView start(
-			@RequestParam(value = "name1", required = true) String name1,
-			@RequestParam(value = "name2", required = true) String name2) {
+			@ModelAttribute("palyer1") Player player1,
+			@ModelAttribute("palyer2") Player player2) {
 		playerService.createNewPlayer(name1);
 		playerService.createNewPlayer(name2);
 		Game game = gameService.makeGame(name1, name2);

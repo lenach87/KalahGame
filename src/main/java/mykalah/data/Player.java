@@ -1,6 +1,5 @@
 package mykalah.data;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
@@ -21,10 +20,9 @@ public class Player {
     private String name;
 
     @Column
-    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Pit[] pitsForPlayer;
 
-    @Column
+
     @OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Kalah kalahForPlayer;
 

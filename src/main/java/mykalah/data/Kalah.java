@@ -15,7 +15,6 @@ public class Kalah {
     @Column(name = "USER_ID")
     private long id;
 
-    @Column
     @OneToOne
     private Player playerOfKalah;
 

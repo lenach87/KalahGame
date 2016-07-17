@@ -15,7 +15,6 @@ public class Pit {
     @Column(name = "USER_ID")
     private long id;
 
-    @Column
     @ManyToOne
     private Player playerOfPits;
 
