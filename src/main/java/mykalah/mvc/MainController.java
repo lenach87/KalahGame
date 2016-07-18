@@ -51,7 +51,7 @@ public class MainController {
 		Game newgame = gameService.makeGame(gameForm.getPlayer1(), gameForm.getPlayer2());
 		//Player [] players = new Player [] {playerService.findPlayerByName(gameForm.getPlayer1()), playerService.findPlayerByName(gameForm.getPlayer2())};
 		redirect.addFlashAttribute("globalMessage", "Game added successfully");
-		return new ModelAndView("gameboard", "gameForm", newgame);
+		return new ModelAndView("redirect:/gameboard", "gameForm", newgame);
 	//	}
 	//	else {
 	//		result.rejectValue("player2", "player2", "Name already in use");
@@ -60,9 +60,9 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "/gameboard", method = RequestMethod.GET)
-	public ModelAndView viewboard (
+	public ModelAndView gameboard (
 			@ModelAttribute("gameForm") Game game) {
-		ModelAndView mv = new ModelAndView("redirect:/gameboard");
+		ModelAndView mv = new ModelAndView("redirect:/makeMove");
 		Player first = playerService.findPlayerByName(game.getPlayer1());
 		Player second = playerService.findPlayerByName(game.getPlayer2());
 		Player acting;
@@ -106,7 +106,7 @@ public class MainController {
 				return new ModelAndView("redirect:/result", "winner", opposite.getName());
 			}
 		}
-		return new ModelAndView ("redirect:/gameboard");
+		return new ModelAndView ("redirect:/makeMove");
 
 	}
 }
