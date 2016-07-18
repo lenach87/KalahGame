@@ -8,6 +8,7 @@ package mykalah.data;
  */
 @Repository
 public interface KalahRepository extends JpaRepository<Kalah, Long> {
+
     Kalah findKalahByPlayerOfKalahName(String name);
 }
 

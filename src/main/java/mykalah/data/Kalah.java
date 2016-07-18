@@ -1,6 +1,7 @@
 package mykalah.data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +9,15 @@ import java.util.List;
  * Created by o.chubukina on 14/07/2016.
  */
 @Entity
-public class Kalah {
+public class Kalah implements Serializable {
+    static final long serialVersionUID = 42L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "USER_ID")
+    @Column(name = "KALAH_ID")
     private long id;
 
-    @OneToOne
+    @OneToOne (mappedBy = "kalahForPlayer", cascade = CascadeType.ALL)
     private Player playerOfKalah;
 
     public int getStonesInKalah() {

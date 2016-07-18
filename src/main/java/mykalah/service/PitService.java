@@ -2,30 +2,59 @@ package mykalah.service;
 
 import mykalah.data.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by o.chubukina on 14/07/2016.
  */
 @Service
+@Transactional(isolation= Isolation.SERIALIZABLE)
 public class PitService {
-
+    @Autowired
+    PitRepository pitRepository;
 
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private PlayerService playerService;
+
+    public List <Pit> save (List <Pit> pits) {
+        for (Pit i:pits) {
+            pitRepository.save(i);
+        }
+        return pits;
+    }
+
     public boolean makeMove (long gameId, int number) {
-        Player[] players = gameService.findOne(gameId).getPlayersOfGame();
+        String[] players = gameService.findOne(gameId).getPlayersOfGame();
+        final Player first = playerService.findPlayerByName(players[0]);
+        final Player second = playerService.findPlayerByName(players[1]);
         Player acting;
         Player opposite;
-        if (players[0].isInTurn()) {
-            acting = players[0];
-            opposite = players[1];
-        } else {
-            acting = players[1];
-            opposite = players[0];
+        if (first.isInTurn()) {
+            acting = first;
+            opposite = second;
+        } else if (second.isInTurn()) {
+            acting = second;
+            opposite = first;
         }
-        Pit[] pitsForActing = acting.getPitsForPlayer();
+        else {
+            first.setInTurn(true);
+            second.setInTurn(false);
+            acting = first;
+            opposite = second;
+        }
+        Pit[] pitsForActing = (Pit[]) acting.getPitsForPlayer().toArray();
         Pit selected = pitsForActing[number - 1];
         int amountOfStonesForTurn = selected.getStonesInPit();
 
@@ -119,8 +148,8 @@ public class PitService {
     }
 
     public boolean makeMoveEndActivePit (int number, Player acting, Player opposite, int times) {
-        Pit[] pitsForActing = acting.getPitsForPlayer();
-        Pit[] pitsForOpposite = opposite.getPitsForPlayer();
+        Pit[] pitsForActing = (Pit[]) acting.getPitsForPlayer().toArray();
+        Pit[] pitsForOpposite = (Pit[]) opposite.getPitsForPlayer().toArray();
         Kalah kalahForActing = acting.getKalahForPlayer();
 
         Pit selected = pitsForActing[number - 1];
@@ -148,7 +177,8 @@ public class PitService {
     }
 
     public boolean makeMoveEndActiveKalah (int number, Player acting, Player opposite, int times) {
-        Pit[] pitsForActing = acting.getPitsForPlayer();
+        Pit[] pitsForActing = (Pit[]) acting.getPitsForPlayer().toArray();
+
         Kalah kalahForActing = acting.getKalahForPlayer();
 
         Pit selected = pitsForActing[number - 1];
@@ -169,8 +199,8 @@ public class PitService {
     }
 
     public boolean makeMoveEndOppositePit (int number, Player acting, Player opposite, int times) {
-        Pit[] pitsForActing = acting.getPitsForPlayer();
-        Pit[] pitsForOpposite = opposite.getPitsForPlayer();
+        Pit[] pitsForActing = (Pit[]) acting.getPitsForPlayer().toArray();
+        Pit[] pitsForOpposite = (Pit[]) opposite.getPitsForPlayer().toArray();
         Kalah kalahForActing = acting.getKalahForPlayer();
 
         Pit selected = pitsForActing[number - 1];
@@ -197,8 +227,8 @@ public class PitService {
         }
     }
     public boolean makeMoveEndActingPitNotFullRound (int number, Player acting, Player opposite, int times) {
-        Pit[] pitsForActing = acting.getPitsForPlayer();
-        Pit[] pitsForOpposite = opposite.getPitsForPlayer();
+        Pit[] pitsForActing = (Pit[]) acting.getPitsForPlayer().toArray();
+        Pit[] pitsForOpposite = (Pit[]) opposite.getPitsForPlayer().toArray();
         Kalah kalahForActing = acting.getKalahForPlayer();
 
         Pit selected = pitsForActing[number - 1];
@@ -231,8 +261,8 @@ public class PitService {
     }
         public void makeFullMove (int number, Player acting, Player opposite, int times) {
 
-            Pit[] pitsForActing = acting.getPitsForPlayer();
-            Pit[] pitsForOpposite = opposite.getPitsForPlayer();
+            Pit[] pitsForActing = (Pit[]) acting.getPitsForPlayer().toArray();
+            Pit[] pitsForOpposite = (Pit[]) opposite.getPitsForPlayer().toArray();
             Kalah kalahForActing = acting.getKalahForPlayer();
             Pit selected = pitsForActing[number - 1];
             selected.setStonesInPit(0);

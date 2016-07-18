@@ -4,26 +4,30 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.*;
 
 
 @Entity
 @Table(name = "Players")
-public class Player {
+public class Player implements Serializable {
+    static final long serialVersionUID = 42L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column (name = "USER_ID")
+    @Column (name = "PLAYER_ID")
     private long id;
 
-    @Column (name = "USER_Name", unique = true)
+    @Column (unique = true)
     private String name;
 
-    @Column
-    private Pit[] pitsForPlayer;
+   // @Column(name = "pits_player")
+    @OneToMany (mappedBy = "playerOfPits", cascade = CascadeType.ALL)
+    private List<Pit> pitsForPlayer;
 
 
     @OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn (name = "Kalah")
     private Kalah kalahForPlayer;
 
     @Column
@@ -53,13 +57,11 @@ public class Player {
         this.name = name;
     }
 
-    public Pit[] getPitsForPlayer() {
+    public List<Pit> getPitsForPlayer() {
         return pitsForPlayer;
     }
 
-    public void setPitsForPlayer(Pit[] pitsForPlayer) {
-        this.pitsForPlayer = pitsForPlayer;
-    }
+    public void setPitsForPlayer(List<Pit> pitsForPlayer) {this.pitsForPlayer = pitsForPlayer;}
 
     public Kalah getKalahForPlayer() {
         return kalahForPlayer;

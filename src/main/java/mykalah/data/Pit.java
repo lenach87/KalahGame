@@ -1,6 +1,7 @@
 package mykalah.data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +9,16 @@ import java.util.List;
  * Created by o.chubukina on 14/07/2016.
  */
 @Entity
-public class Pit {
+public class Pit implements Serializable {
+    static final long serialVersionUID = 42L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "USER_ID")
+    @Column(name = "PIT_ID")
     private long id;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn (name = "PitsOfPlayer")
     private Player playerOfPits;
 
     @Column

@@ -4,8 +4,11 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @EnableWebMvc
 @ComponentScan({"mykalah.mvc, mykalah.data, mykalah.service, mykalah.config"})
 @EnableJpaRepositories (basePackages = "mykalah.data")
+@EnableTransactionManagement (proxyTargetClass = true)
 public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Bean(name = "myDataSource")
@@ -25,11 +29,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
         driverManagerDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mykalah?useUnicode=true&amp;characterEncoding=UTF8&amp;characterSetResults=UTF-8");
         driverManagerDataSource.setUsername("root");
-        driverManagerDataSource.setPassword("5452");
+        driverManagerDataSource.setPassword("test");
         return driverManagerDataSource;
     }
 
-    @Bean
+    @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(){
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
         factoryBean.setDataSource(myDataSource());
@@ -69,6 +73,12 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
+    @Bean
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager txManager = new JpaTransactionManager();
+        txManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return txManager;
+    }
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

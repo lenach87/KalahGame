@@ -8,8 +8,12 @@ import mykalah.service.PitService;
 import mykalah.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -30,72 +34,79 @@ public class MainController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView startpage() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("index");
-		return model;
+	public String startpage(Model model) {
+		Game gameForm = new Game();
+		model.addAttribute("gameForm", gameForm);
+		return "index";
 	}
 
-	@RequestMapping(value = "/index", method = RequestMethod.GET)
-	public ModelAndView index() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("index");
-		return model;
-	}
+	@RequestMapping(value = "/startgame", method = RequestMethod.POST)
+	public ModelAndView startgame(
+			@ModelAttribute("gameForm") Game gameForm, BindingResult result,
+			ModelMap model, RedirectAttributes redirect) {
+		model.addAttribute("player1", gameForm.getPlayer1());
+		model.addAttribute("player2", gameForm.getPlayer2());
 
-	@RequestMapping(value = "/index", method = RequestMethod.POST)
-	public ModelAndView start(
-			@ModelAttribute("palyer1") Player player1,
-			@ModelAttribute("palyer2") Player player2) {
-		playerService.createNewPlayer(name1);
-		playerService.createNewPlayer(name2);
-		Game game = gameService.makeGame(name1, name2);
-		long id = game.getId();
-		return new ModelAndView("redirect/gameboard", "gameId", id);
-
+		//if (gameService.makeGame(gameForm.getPlayersOfGame()[0], gameForm.getPlayersOfGame()[1])!=null) {
+		Game newgame = gameService.makeGame(gameForm.getPlayer1(), gameForm.getPlayer2());
+		//Player [] players = new Player [] {playerService.findPlayerByName(gameForm.getPlayer1()), playerService.findPlayerByName(gameForm.getPlayer2())};
+		redirect.addFlashAttribute("globalMessage", "Game added successfully");
+		return new ModelAndView("gameboard", "gameForm", newgame);
+	//	}
+	//	else {
+	//		result.rejectValue("player2", "player2", "Name already in use");
+	//		return new ModelAndView("index");
+	//	}
 	}
 
 	@RequestMapping(value = "/gameboard", method = RequestMethod.GET)
-	public ModelAndView gameboard (
-			@RequestParam(value = "gameid", required = true) long gameid) {
-		Player [] players = gameService.findOne(gameid).getPlayersOfGame();
+	public ModelAndView viewboard (
+			@ModelAttribute("gameForm") Game game) {
+		ModelAndView mv = new ModelAndView("redirect:/gameboard");
+		Player first = playerService.findPlayerByName(game.getPlayer1());
+		Player second = playerService.findPlayerByName(game.getPlayer2());
 		Player acting;
 		Player opposite;
-		if (players[0].isInTurn()) {
-			acting = players[0];
-			opposite = players[1];
+		if (first.isInTurn()) {
+			acting = first;
+			opposite = second;
 		} else {
-			acting = players[1];
-			opposite = players[0];
+			acting = second;
+			opposite = first;
 		}
-		return new ModelAndView("gameboard", "acting", acting.getName());
+		Player [] gameplayers = new Player [] {acting, opposite};
+		mv.addObject("game", game);
+		mv.addObject("players", gameplayers);
+        return mv;
 	}
 
 	@RequestMapping(value = "/gameboard", method = RequestMethod.POST)
 	public ModelAndView makeMove(
-			@RequestParam(value = "gameid", required = true) long gameid,
+			@ModelAttribute("players") Player [] gameplayers,
+            @ModelAttribute("game") Game game,
 			@RequestParam(value = "numberOfPit", required = true) int numberOfPit) {
 
-		Player [] players = gameService.findOne(gameid).getPlayersOfGame();
+		final Player first = gameplayers[0];
+		final Player second =gameplayers[1];
 		Player acting;
 		Player opposite;
-		if (players[0].isInTurn()) {
-			acting = players[0];
-			opposite = players[1];
+		if (first.isInTurn()) {
+			acting = first;
+			opposite = second;
 		} else {
-			acting = players[1];
-			opposite = players[0];
+			acting = second;
+			opposite = first;
 		}
-		boolean result = pitService.makeMove(gameid, numberOfPit);
+		boolean result = pitService.makeMove(game.getId(), numberOfPit);
 		if (result) {
 			if (pitService.getStonesCount(acting)>pitService.getStonesCount(opposite)) {
-				return new ModelAndView("redirect/result", "winner", acting.getName());
+				return new ModelAndView("redirect:/result", "winner", acting.getName());
 			}
 			else {
-				return new ModelAndView("redirect/result", "winner", opposite.getName());
+				return new ModelAndView("redirect:/result", "winner", opposite.getName());
 			}
 		}
-		return new ModelAndView ("redirect/gameboard");
+		return new ModelAndView ("redirect:/gameboard");
 
 	}
 }
