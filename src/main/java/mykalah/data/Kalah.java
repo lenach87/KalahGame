@@ -2,12 +2,8 @@ package mykalah.data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Created by o.chubukina on 14/07/2016.
- */
+
 @Entity
 public class Kalah implements Serializable {
     static final long serialVersionUID = 42L;
@@ -17,7 +13,7 @@ public class Kalah implements Serializable {
     @Column(name = "KALAH_ID")
     private long id;
 
-    @OneToOne (mappedBy = "kalahForPlayer", cascade = CascadeType.ALL)
+    @OneToOne (mappedBy = "kalahForPlayer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Player playerOfKalah;
 
     public int getStonesInKalah() {

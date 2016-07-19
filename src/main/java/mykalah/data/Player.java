@@ -1,12 +1,9 @@
 package mykalah.data;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.util.*;
-
 
 @Entity
 @Table(name = "Players")
@@ -18,17 +15,61 @@ public class Player implements Serializable {
     @Column (name = "PLAYER_ID")
     private long id;
 
+    public List<Move> getMovesAsActingPlayer() {
+        return movesAsActingPlayer;
+    }
+
+    public void setMovesAsActingPlayer(List<Move> movesAsActingPlayer) {
+        this.movesAsActingPlayer = movesAsActingPlayer;
+    }
+
+    public List<Move> getMovesAsOppositePlayer() {
+        return movesAsOppositePlayer;
+    }
+
+    public void setMovesAsOppositePlayer(List<Move> movesAsOppositePlayer) {
+        this.movesAsOppositePlayer = movesAsOppositePlayer;
+    }
+
+    public List<Game> getGameAsPlayer1() {
+        return gameAsPlayer1;
+    }
+
+    public void setGameAsPlayer1(List<Game> gameAsPlayer1) {
+        this.gameAsPlayer1 = gameAsPlayer1;
+    }
+
+    public List<Game> getGameAsPlayer2() {
+        return gameAsPlayer2;
+    }
+
+    public void setGameAsPlayer2(List<Game> gameAsPlayer2) {
+        this.gameAsPlayer2 = gameAsPlayer2;
+    }
+
     @Column (unique = true)
+
     private String name;
 
-   // @Column(name = "pits_player")
-    @OneToMany (mappedBy = "playerOfPits", cascade = CascadeType.ALL)
+    @OneToMany (mappedBy = "playerOfPits", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Pit> pitsForPlayer;
 
 
     @OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn (name = "Kalah")
     private Kalah kalahForPlayer;
+
+    @OneToMany (mappedBy = "actingPlayer1", cascade = CascadeType.ALL)
+    private List<Move> movesAsActingPlayer;
+
+    @OneToMany (mappedBy = "oppositePlayer1", cascade = CascadeType.ALL)
+    private List<Move> movesAsOppositePlayer;
+
+    @OneToMany (mappedBy = "initialPlayer1", cascade = CascadeType.ALL)
+    private List <Game> gameAsPlayer1;
+
+    @OneToMany (mappedBy = "initialPlayer2", cascade = CascadeType.ALL)
+    private List <Game> gameAsPlayer2;
 
     @Column
     private boolean inTurn;

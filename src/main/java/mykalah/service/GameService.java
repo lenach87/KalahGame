@@ -1,31 +1,14 @@
 package mykalah.service;
 
 import mykalah.data.*;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
-/**
- * Created by o.chubukina on 14/07/2016.
- */
 @Service
 @Transactional(isolation= Isolation.SERIALIZABLE)
 public class GameService {
@@ -49,26 +32,32 @@ public class GameService {
         return gameRepository.findOne(id);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public Game makeGame (String nameActing, String nameOpposite) {
 
-        //  TransactionTemplate template = new TransactionTemplate(this.txManager);
-        //  em.getTransaction().begin();
-        //   Game execute = template.execute(new TransactionCallback<Game>() {
-        //   public Game doInTransaction(TransactionStatus status) {
-
         Game game = new Game();
-        createNewPlayer(nameActing);
-        createNewPlayer(nameOpposite);
+        playerService.save(createNewActingPlayer(nameActing));
+        playerService.save(createNewOppositePlayer(nameOpposite));
         game.setPlayer1(nameActing);
         game.setPlayer2(nameOpposite);
         game.setPlayersOfGame(new String[]{nameActing, nameOpposite});
+        game.setInitialPlayer1(playerService.findPlayerByName(nameActing));
+        game.setInitialPlayer2(playerService.findPlayerByName(nameOpposite));
+        game.setAsFirst(true);
         gameRepository.saveAndFlush(game);
-        //   playerService.findPlayerByName(nameActing).setInTurn(true);
         return game;
     }
+
     @Transactional
-    public Player createNewPlayer (String name) {
+    public Game updateGame (Game game, int i) {
+
+        Game thisgame = gameRepository.findOne(game.getId());
+        thisgame.setTempNumber(i);
+        return thisgame;
+    }
+
+    @Transactional
+    public Player createNewActingPlayer (String name) {
         Player newPlayer = new Player();
         newPlayer.setName(name);
         Kalah kalah = createNewKalah();
@@ -79,14 +68,30 @@ public class GameService {
         for (Pit pit:pits) {
             pit.setPlayerOfPits(newPlayer);
         }
-        return playerService.saveAndFlush(newPlayer);
+        newPlayer.setInTurn(true);
+        return newPlayer;
     }
+    @Transactional
+    public Player createNewOppositePlayer (String name) {
+        Player newPlayer = new Player();
+        newPlayer.setName(name);
+        Kalah kalah = createNewKalah();
+        newPlayer.setKalahForPlayer(kalah);
+        kalah.setPlayerOfKalah(newPlayer);
+        List <Pit> pits = createNewPits();
+        newPlayer.setPitsForPlayer(pits);
+        for (Pit pit:pits) {
+            pit.setPlayerOfPits(newPlayer);
+        }
+        newPlayer.setInTurn(false);
+        return newPlayer;
+    }
+
     @Transactional
     public Kalah createNewKalah () {
         Kalah kalah = new Kalah();
         kalah.setStonesInKalah(0);
-    //    kalah.setPlayerOfKalah(player);
-        return  kalahService.saveAndFlush(kalah);
+        return  kalah;
     }
     @Transactional
     public List <Pit> createNewPits () {
@@ -97,6 +102,6 @@ public class GameService {
             pits.add(p);
             p.setStonesInPit(6);
         }
-        return pitService.save(pits);
+        return pits;
     }
 }

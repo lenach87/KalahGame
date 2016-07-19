@@ -2,12 +2,8 @@ package mykalah.data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Created by o.chubukina on 14/07/2016.
- */
+
 @Entity
 public class Pit implements Serializable {
     static final long serialVersionUID = 42L;

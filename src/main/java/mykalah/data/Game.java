@@ -2,10 +2,8 @@ package mykalah.data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
-/**
- * Created by o.chubukina on 14/07/2016.
- */
 @Entity
 public class Game implements Serializable {
     static final long serialVersionUID = 42L;
@@ -14,6 +12,22 @@ public class Game implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "GAME_ID")
     private long id;
+
+    public Player getInitialPlayer1() {
+        return initialPlayer1;
+    }
+
+    public void setInitialPlayer1(Player initialPlayer1) {
+        this.initialPlayer1 = initialPlayer1;
+    }
+
+    public Player getInitialPlayer2() {
+        return initialPlayer2;
+    }
+
+    public void setInitialPlayer2(Player initialPlayer2) {
+        this.initialPlayer2 = initialPlayer2;
+    }
 
     @Column
     private String[] playersOfGame;
@@ -24,6 +38,55 @@ public class Game implements Serializable {
     @Column
     private String player2;
 
+    @OneToMany(mappedBy = "gameForMoves", cascade = CascadeType.ALL)
+    private List<Move> moves;
+
+    @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn (name = "InitialPlayer1")
+    private Player initialPlayer1;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn (name = "InitialPlayer2")
+    private Player initialPlayer2;
+
+    @Column
+    private boolean asFirst;
+    @Column
+    private String winner;
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
+
+    public int getTempNumber() {
+        return tempNumber;
+    }
+
+    public void setTempNumber(int tempNumber) {
+        this.tempNumber = tempNumber;
+    }
+
+    @Column
+    int tempNumber;
+
+    public List<Move> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(List<Move> moves) {
+        this.moves = moves;
+    }
+
+    public boolean isAsFirst() {
+        return asFirst;
+    }
+
+    public void setAsFirst(boolean asFirst) {
+        this.asFirst = asFirst;
+    }
 
     public long getId() {
         return id;

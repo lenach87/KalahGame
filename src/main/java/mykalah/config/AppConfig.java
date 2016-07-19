@@ -7,14 +7,12 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import java.util.Properties;
-import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @EnableWebMvc
@@ -46,14 +44,13 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         factoryBean.setPackagesToScan("mykalah");
         Properties jpaProp = new Properties();
         jpaProp.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-        jpaProp.put("hibernate.hbm2ddl.auto", "update");
+        jpaProp.put("hibernate.hbm2ddl.auto", "create-drop");
         jpaProp.put("hibernate.show_sql", Boolean.parseBoolean("true"));
         jpaProp.put("hibernate.connection.charset", "UTF-8");
         jpaProp.put("hibernate.connection.release_mode", "auto");
         jpaProp.put("javax.persistence.validation.mode", "callback");
         factoryBean.setJpaProperties(jpaProp);
         factoryBean.afterPropertiesSet();
-      //  factoryBean.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
         return factoryBean;
     }
 

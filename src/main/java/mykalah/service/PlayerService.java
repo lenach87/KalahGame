@@ -1,20 +1,11 @@
 package mykalah.service;
 
-
-
 import java.util.List;
-
-
 import mykalah.data.*;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 
 
 @Service
@@ -39,10 +30,6 @@ public class PlayerService {
 
     public Player findOne (long id) {return playerRepository.findOne(id);}
 
-    public Player saveAndFlush (Player player) {return playerRepository.saveAndFlush(player);}
-
-    //   public void delete (long id) {
-    //       playerRepository.delete(id);
-    //   }
+    public Player save (Player player) {return playerRepository.save(player);}
 
 }
