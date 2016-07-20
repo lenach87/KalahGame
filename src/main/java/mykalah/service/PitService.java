@@ -63,25 +63,25 @@ public class PitService {
          * Check if will finish in one's pit before Kalah in first round
          */
         if (amountOfStonesForTurn <= (6 - number)) {
-            return makeMoveEndActivePit(number, acting, opposite, 0);
+            return makeMoveEndActivePit(number, acting, opposite, 0, 0);
         }
         /**
          * Check if will finish in one's Kalah
          */
         if (amountOfStonesForTurn == (6 - number + 1)) {
-            return makeMoveEndActiveKalah(number, acting, opposite, 0);
+            return makeMoveEndActiveKalah(number, acting, opposite, 0, 0);
         }
         /**
          * Check if will finish in opposite pit in first round
          */
         if (amountOfStonesForTurn <= (6 - number + 1 + 6)) {
-            return makeMoveEndOppositePit(number, acting, opposite, 0);
+            return makeMoveEndOppositePit(number, acting, opposite, 0, 0);
         }
         /**
          * Check if will make less than one full round
          */
         if (amountOfStonesForTurn <= 12) {
-            return makeMoveEndActingPitNotFullRound (number, acting, opposite, 0);
+            return makeMoveEndActingPitNotFullRound (number, acting, opposite, 0, 0);
         }
         /**
          * If will make full round several times
@@ -90,7 +90,6 @@ public class PitService {
             int left = amountOfStonesForTurn%13;
             int times = amountOfStonesForTurn/13;
             if (left==0) {
-                makeFullMove(number, acting, opposite, times);
                 if (checkIfEndGame(acting, opposite)) {
                     return true;
                 }
@@ -101,20 +100,20 @@ public class PitService {
                 }
             }
             if (left<=(6 - number)) {
-                makeFullMove(number, acting, opposite, times);
-                return makeMoveEndActivePit(left, acting, opposite, times);
+                int initial = makeFullMove(number, acting, opposite, times);
+                return makeMoveEndActivePit(number, acting, opposite, times, initial);
             }
             if (left == (6 - number + 1)) {
-                makeFullMove(number, acting, opposite, times);
-                return makeMoveEndActiveKalah(left, acting, opposite, times);
+                int initial = makeFullMove(number, acting, opposite, times);
+                return makeMoveEndActiveKalah(number, acting, opposite, times, initial);
             }
             if (left <= (6 - number + 1 + 6)) {
-                makeFullMove(number, acting, opposite, times);
-                return makeMoveEndOppositePit(number, acting, opposite, times);
+                int initial = makeFullMove(number, acting, opposite, times);
+                return makeMoveEndOppositePit(number, acting, opposite, times, initial);
             }
             else {
-                makeFullMove(number, acting, opposite, times);
-                return makeMoveEndActingPitNotFullRound (number, acting, opposite, times);
+                int initial = makeFullMove(number, acting, opposite, times);
+                return makeMoveEndActingPitNotFullRound (number, acting, opposite, times, initial);
             }
         }
     }
@@ -149,24 +148,27 @@ public class PitService {
         return i;
     }
 
-    public boolean makeMoveEndActivePit (int number, Player acting, Player opposite, int times) {
+    public boolean makeMoveEndActivePit (int number, Player acting, Player opposite, int times, int initial) {
         List <Pit> pitsForActing = acting.getPitsForPlayer();
         List <Pit> pitsForOpposite = opposite.getPitsForPlayer();
         Kalah kalahForActing = acting.getKalahForPlayer();
-
+        int amountOfStonesForTurn;
         Pit selected = pitsForActing.get(number - 1);
-        int amountOfStonesForTurn = selected.getStonesInPit();
-        if (amountOfStonesForTurn >= (6 - number)) {
-            amountOfStonesForTurn = amountOfStonesForTurn%13;
+        if (initial==0) {
+            amountOfStonesForTurn = selected.getStonesInPit();
+            selected.setStonesInPit(0+times);
+            for (int i = amountOfStonesForTurn, j = 0; i > 0; i--, j++) {
+                pitsForActing.get(number + j).setStonesInPit(pitsForActing.get(number + j).getStonesInPit() + 1);
+            }
         }
-        if (amountOfStonesForTurn < (6 - number)) {
-            selected.setStonesInPit(0);
+        else {
+            amountOfStonesForTurn = (initial - 13*times);
+            selected.setStonesInPit(0+times);
+            for (int i = amountOfStonesForTurn, j = 0; i > 0; i--, j++) {
+                pitsForActing.get(number + j).setStonesInPit(pitsForActing.get(number + j).getStonesInPit() + 1);
+            }
         }
-        for (int i = amountOfStonesForTurn, j = 0; i > 0; i--, j++) {
-            pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
-
-        }
-        if ((pitsForActing.get(number + amountOfStonesForTurn - 1).getStonesInPit() == times) &&
+        if ((pitsForActing.get(number + amountOfStonesForTurn - 1).getStonesInPit() == 1) &&
                 (pitsForOpposite.get(5 - (number + amountOfStonesForTurn - 1)).getStonesInPit() != 0)) {
                 kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1 + pitsForOpposite.get(5 - (number + amountOfStonesForTurn - 1)).getStonesInPit());
                 pitsForOpposite.get(5 - (number + amountOfStonesForTurn - 1)).setStonesInPit(0);
@@ -182,16 +184,27 @@ public class PitService {
         }
     }
 
-    public boolean makeMoveEndActiveKalah (int number, Player acting, Player opposite, int times) {
+    public boolean makeMoveEndActiveKalah (int number, Player acting, Player opposite, int times, int initial) {
         List <Pit> pitsForActing = acting.getPitsForPlayer();
         Kalah kalahForActing = acting.getKalahForPlayer();
         Pit selected = pitsForActing.get(number - 1);
-        int amountOfStonesForTurn = selected.getStonesInPit();
-        if (amountOfStonesForTurn>(6 - number + 1 + 6)) {
-            amountOfStonesForTurn = amountOfStonesForTurn%13;
+        int amountOfStonesForTurn;
+        if (initial==0) {
+            amountOfStonesForTurn = selected.getStonesInPit();
+            selected.setStonesInPit(0+times);
+            for (int i = amountOfStonesForTurn, j = 0; i < (6-number); i--, j++) {
+                pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
+            }
         }
-        selected.setStonesInPit(0+times);
-        for (int i = amountOfStonesForTurn, j = 0; i > 1; i--, j++) {
+        else {
+            amountOfStonesForTurn = initial - 13*times;
+            selected.setStonesInPit(0+times);
+            for (int i = amountOfStonesForTurn, j = 0; i < (6-number); i--, j++) {
+                pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
+            }
+        }
+
+        for (int i = amountOfStonesForTurn, j = 0; i < (6-number); i--, j++) {
             pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
         }
         kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
@@ -202,27 +215,43 @@ public class PitService {
         }
     }
 
-    public boolean makeMoveEndOppositePit (int number, Player acting, Player opposite, int times) {
+    public boolean makeMoveEndOppositePit (int number, Player acting, Player opposite, int times, int initial) {
         List <Pit> pitsForActing = acting.getPitsForPlayer();
         List <Pit> pitsForOpposite = opposite.getPitsForPlayer();
         Kalah kalahForActing = acting.getKalahForPlayer();
 
         Pit selected = pitsForActing.get(number - 1);
-        int amountOfStonesForTurn = selected.getStonesInPit();
-        if (amountOfStonesForTurn>(6 - number + 1)) {
-            amountOfStonesForTurn = amountOfStonesForTurn%13;
+        int amountOfStonesForTurn;
+        if (initial==0) {
+            amountOfStonesForTurn = selected.getStonesInPit();
+            selected.setStonesInPit(0+times);
+            int usedForActing = 0;
+            for (int i = number, j = 1; i < 6; i++, j++) {
+                pitsForActing.get(i).setStonesInPit((pitsForActing.get(i).getStonesInPit()) + 1);
+                usedForActing = j;
+            }
+            kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
+            usedForActing += 1;
+            for (int i = (amountOfStonesForTurn - usedForActing), j = 0; i > 0; i--, j++) {
+                pitsForOpposite.get(j).setStonesInPit((pitsForOpposite.get(j).getStonesInPit()) + 1);
+            }
+        }
+        else {
+            amountOfStonesForTurn = initial - 13*times;
+            selected.setStonesInPit(0+times);
+            int usedForActing = 0;
+            for (int i = number, j = 1; i < 6; i++, j++) {
+                pitsForActing.get(i).setStonesInPit((pitsForActing.get(i).getStonesInPit()) + 1);
+                usedForActing = j;
+            }
+            kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
+            usedForActing += 1;
+            for (int i = (amountOfStonesForTurn - usedForActing), j = 0; i > 0; i--, j++) {
+                pitsForOpposite.get(j).setStonesInPit((pitsForOpposite.get(j).getStonesInPit()) + 1);
+            }
         }
         selected.setStonesInPit(0+times);
-        int usedForActing = 0;
-        for (int i = number, j = 0; i < 6; i++, j++) {
-            pitsForActing.get(i).setStonesInPit((pitsForActing.get(i).getStonesInPit()) + 1);
-            usedForActing = j;
-        }
-        kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
-        usedForActing += 1;
-        for (int i = (amountOfStonesForTurn - usedForActing - 1), j = 0; i > 0; i--, j++) {
-            pitsForOpposite.get(j).setStonesInPit((pitsForOpposite.get(j).getStonesInPit()) + 1);
-        }
+
         if (checkIfEndGame(acting, opposite)) {
             return true;
         } else {
@@ -231,28 +260,50 @@ public class PitService {
             return false;
         }
     }
-    public boolean makeMoveEndActingPitNotFullRound (int number, Player acting, Player opposite, int times) {
+    public boolean makeMoveEndActingPitNotFullRound (int number, Player acting, Player opposite, int times, int initial) {
         List <Pit> pitsForActing = acting.getPitsForPlayer();
         List <Pit> pitsForOpposite = opposite.getPitsForPlayer();
         Kalah kalahForActing = acting.getKalahForPlayer();
         Pit selected = pitsForActing.get(number - 1);
-        int amountOfStonesForTurn = selected.getStonesInPit();
-        selected.setStonesInPit(0+times);
-        kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
-        for (int i = 6, j = 0; i > 0; i--, j++) {
-            pitsForOpposite.get(j).setStonesInPit((pitsForOpposite.get(j).getStonesInPit()) + 1);
+        int amountOfStonesForTurn;
+        int leftForActing;
+        int forFirstIteration;
+        int forSecondIteration;
+        if (initial==0) {
+            amountOfStonesForTurn = selected.getStonesInPit();
+            selected.setStonesInPit(0 + times);
+            kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
+            for (int i = 6, j = 0; i > 0; i--, j++) {
+                pitsForOpposite.get(j).setStonesInPit((pitsForOpposite.get(j).getStonesInPit()) + 1);
+            }
+            leftForActing = amountOfStonesForTurn - 6 - 1;
+            forFirstIteration = 6 - number;
+            forSecondIteration = leftForActing - forFirstIteration;
+            for (int i = forFirstIteration, j = 0; i > 0; i--, j++) {
+                pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
+            }
+            for (int i = forSecondIteration, j = 0; i > 0; i--, j++) {
+                pitsForActing.get(j).setStonesInPit((pitsForActing.get(j).getStonesInPit()) + 1);
+            }
         }
-        int leftForActing = amountOfStonesForTurn - 6 + 1;
-        int forFirstIteration = 6 - number;
-        int forSecondIteration = leftForActing - forFirstIteration;
-        for (int i = forFirstIteration, j = 0; i > 0; i--, j++) {
-            pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
+        else {
+            amountOfStonesForTurn = initial - 13*times;
+            selected.setStonesInPit(0+times);
+            kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1);
+            for (int i = 6, j = 0; i > 0; i--, j++) {
+                pitsForOpposite.get(j).setStonesInPit((pitsForOpposite.get(j).getStonesInPit()) + 1);
+            }
+            leftForActing = amountOfStonesForTurn - 6 - 1;
+            forFirstIteration = 6 - number;
+            forSecondIteration = leftForActing - forFirstIteration;
+            for (int i = forFirstIteration, j = 0; i > 0; i--, j++) {
+                pitsForActing.get(number + j).setStonesInPit((pitsForActing.get(number + j).getStonesInPit()) + 1);
+            }
+            for (int i = forSecondIteration, j = 0; i > 0; i--, j++) {
+                pitsForActing.get(j).setStonesInPit((pitsForActing.get(j).getStonesInPit()) + 1);
+            }
         }
-        for (int i = forSecondIteration, j = 0; i > 0; i--, j++) {
-            pitsForActing.get(j).setStonesInPit((pitsForActing.get(j).getStonesInPit()) + 1);
-        }
-
-        if ((pitsForActing.get(forSecondIteration - 1).getStonesInPit() == times) &&
+        if ((pitsForActing.get(forSecondIteration - 1).getStonesInPit() == 1) &&
                     (pitsForOpposite.get(5 - (forSecondIteration - 1)).getStonesInPit() != 0)) {
                 kalahForActing.setStonesInKalah(kalahForActing.getStonesInKalah() + 1 + pitsForOpposite.get(5 - (forSecondIteration - 1)).getStonesInPit());
                 pitsForOpposite.get(5 - (forSecondIteration - 1)).setStonesInPit(0);
@@ -267,12 +318,13 @@ public class PitService {
             return false;
         }
     }
-        public void makeFullMove (int number, Player acting, Player opposite, int times) {
+        public int makeFullMove (int number, Player acting, Player opposite, int times) {
 
             List <Pit> pitsForActing = acting.getPitsForPlayer();
             List <Pit> pitsForOpposite = opposite.getPitsForPlayer();
             Kalah kalahForActing = acting.getKalahForPlayer();
             Pit selected = pitsForActing.get(number - 1);
+            int initial = selected.getStonesInPit();
             selected.setStonesInPit(0);
             for (int i = 6, j = 0; i > 0; i--, j++) {
                 pitsForActing.get(j).setStonesInPit(pitsForActing.get(j).getStonesInPit()+times);
@@ -281,5 +333,6 @@ public class PitService {
             for (int i = 6, j = 0; i > 0; i--, j++) {
                 pitsForOpposite.get(j).setStonesInPit(pitsForOpposite.get(j).getStonesInPit()+times);
             }
+            return initial;
         }
     }

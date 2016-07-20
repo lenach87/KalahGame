@@ -27,7 +27,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
         driverManagerDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mykalah?useUnicode=true&amp;characterEncoding=UTF8&amp;characterSetResults=UTF-8");
         driverManagerDataSource.setUsername("root");
-        driverManagerDataSource.setPassword("test");
+        driverManagerDataSource.setPassword("5452");
         return driverManagerDataSource;
     }
 
@@ -59,7 +59,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("WEB-INF/pages/");
+        viewResolver.setPrefix("/WEB-INF/pages/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
     }

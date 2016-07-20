@@ -7,7 +7,7 @@
 <body>
 
 <div class="form-group">
-    <form:form action="/" method="post" modelAttribute="playersForm"
+    <form:form action="${rootURL}" method="post" modelAttribute="playersForm"
                class="form-horizontal" role="form" cssStyle="width: 800px; margin: 0 auto;">
 
     <div class="form-group">
@@ -26,7 +26,7 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-4">
-            <button class="btn btn-lg btn-primary btn-block"  type="submit" value="/"> Start game </button>
+            <button class="btn btn-lg btn-primary btn-block"  type="submit" value="${rootURL}"> Start game </button>
             </form:form>
         </div>
     </div>
