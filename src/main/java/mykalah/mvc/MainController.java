@@ -34,12 +34,12 @@ public class MainController {
 		this.gameService = gameService;
 	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String startpage(Model model) {
-        Game gameForm = new Game();
-        model.addAttribute("playersForm", gameForm);
-        return "index";
-    }
+	@RequestMapping(method = RequestMethod.GET)
+	public String startpage(Model model) {
+		Game gameForm = new Game();
+		model.addAttribute("playersForm", gameForm);
+		return "index";
+	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public RedirectView startgame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
@@ -72,7 +72,7 @@ public class MainController {
 		else {
 			newGame.setAsFirst(false);
 		}
-		redirectAttributes.addFlashAttribute("makeMove", newGame);
+		// redirectAttributes.addFlashAttribute("makeMove", newGame);
 		RedirectView redirectView = new RedirectView();
 		redirectView.setContextRelative(true);
 		redirectView.setUrl("/makeMove");
@@ -80,14 +80,19 @@ public class MainController {
 		redirectView2.setContextRelative(true);
 		redirectView2.setUrl("/result");
 		if (result) {
-				if (pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer1().getName()))>pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer2().getName()))) {
+			if (pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer1().getName()))>pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer2().getName()))) {
+				newGame.setWinner(newGame.getInitialPlayer1().getName());
+				redirectAttributes.addFlashAttribute("makeMove", newGame);
 				return redirectView2;
 			}
 			else {
+				newGame.setWinner(newGame.getInitialPlayer2().getName());
+				redirectAttributes.addFlashAttribute("makeMove", newGame);
 				return redirectView2;
 			}
 		}
 		else {
+			redirectAttributes.addFlashAttribute("makeMove", newGame);
 			return redirectView;
 		}
 	}
