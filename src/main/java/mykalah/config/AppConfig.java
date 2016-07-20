@@ -1,5 +1,6 @@
 package mykalah.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -19,15 +20,36 @@ import java.util.Properties;
 @ComponentScan({"mykalah.mvc, mykalah.data, mykalah.service, mykalah.config"})
 @EnableJpaRepositories (basePackages = "mykalah.data")
 @EnableTransactionManagement (proxyTargetClass = true)
+@PropertySource("classpath:application.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {
+
+    // inject properties
+    @Value("${jdbc.driver}")
+    private String jdbcDriver;
+    @Value("${jdbc.url}")
+    private String jdbcURL;
+    @Value("${jdbc.username}")
+    private String jdbcUsername;
+    @Value("${jdbc.password}")
+    private String jdbcPassword;
+    @Value("${hibernate.dialect}")
+    private String sqlDialect;
+    @Value("${hbm2ddl.auto}")
+    private String hbm2dllAuto;
+    @Value("${connection.charset}")
+    private String connectionCharset;
+    @Value("${connection.release}")
+    private String connectionRelease;
+    @Value("${validation.mode}")
+    private String validationMode;
 
     @Bean(name = "myDataSource")
     public DriverManagerDataSource myDataSource() {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        driverManagerDataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mykalah?useUnicode=true&amp;characterEncoding=UTF8&amp;characterSetResults=UTF-8");
-        driverManagerDataSource.setUsername("root");
-        driverManagerDataSource.setPassword("5452");
+        driverManagerDataSource.setDriverClassName(jdbcDriver);
+        driverManagerDataSource.setUrl(jdbcURL);
+        driverManagerDataSource.setUsername(jdbcUsername);
+        driverManagerDataSource.setPassword(jdbcPassword);
         return driverManagerDataSource;
     }
 
@@ -39,16 +61,16 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         HibernateJpaVendorAdapter adapter =  new HibernateJpaVendorAdapter();
         adapter.setShowSql(true);
         adapter.setGenerateDdl(false);
-        adapter.setDatabasePlatform("org.hibernate.dialect.MySQLDialect");
+        adapter.setDatabasePlatform(sqlDialect);
         factoryBean.setJpaVendorAdapter(adapter);
         factoryBean.setPackagesToScan("mykalah");
         Properties jpaProp = new Properties();
-        jpaProp.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-        jpaProp.put("hibernate.hbm2ddl.auto", "create-drop");
+        jpaProp.put("hibernate.dialect", sqlDialect);
+        jpaProp.put("hibernate.hbm2ddl.auto", hbm2dllAuto);
         jpaProp.put("hibernate.show_sql", Boolean.parseBoolean("true"));
-        jpaProp.put("hibernate.connection.charset", "UTF-8");
-        jpaProp.put("hibernate.connection.release_mode", "auto");
-        jpaProp.put("javax.persistence.validation.mode", "callback");
+        jpaProp.put("hibernate.connection.charset", connectionCharset);
+        jpaProp.put("hibernate.connection.release_mode", connectionRelease);
+        jpaProp.put("javax.persistence.validation.mode", validationMode);
         factoryBean.setJpaProperties(jpaProp);
         factoryBean.afterPropertiesSet();
         return factoryBean;

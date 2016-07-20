@@ -90,6 +90,7 @@ public class PitService {
             int left = amountOfStonesForTurn%13;
             int times = amountOfStonesForTurn/13;
             if (left==0) {
+                makeFullMove(number, acting, opposite, times);
                 if (checkIfEndGame(acting, opposite)) {
                     return true;
                 }
