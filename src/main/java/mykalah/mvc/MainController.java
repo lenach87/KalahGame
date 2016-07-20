@@ -80,7 +80,7 @@ public class MainController {
 		redirectView2.setContextRelative(true);
 		redirectView2.setUrl("/result");
 		if (result) {
-			if (pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer1().getName()))>pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer2().getName()))) {
+			if (playerService.findPlayerByName(newGame.getInitialPlayer1().getName()).getKalahForPlayer().getStonesInKalah()>playerService.findPlayerByName(newGame.getInitialPlayer2().getName()).getKalahForPlayer().getStonesInKalah()) {
 				newGame.setWinner(newGame.getInitialPlayer1().getName());
 				redirectAttributes.addFlashAttribute("makeMove", newGame);
 				return redirectView2;
