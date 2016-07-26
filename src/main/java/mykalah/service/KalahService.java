@@ -11,13 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(isolation= Isolation.SERIALIZABLE)
 public class KalahService {
 
+    public KalahService() {
+    }
 
     @Autowired
     private KalahRepository kalahRepository;
-
-    public Kalah findByPlayerName (String name) {
-        return kalahRepository.findKalahByPlayerOfKalahName(name);
-    }
 
     public Kalah save (Kalah kalah) {
         return kalahRepository.save(kalah);

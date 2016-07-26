@@ -19,14 +19,7 @@ public class GameService {
     private GameRepository gameRepository;
 
     @Autowired
-    private PitService pitService;
-
-    @Autowired
     private PlayerService playerService;
-
-    @Autowired
-    private KalahService kalahService;
-
 
     public Game findOne (Long id) {
         return gameRepository.findOne(id);
@@ -38,22 +31,19 @@ public class GameService {
         Game game = new Game();
         playerService.save(createNewActingPlayer(nameActing));
         playerService.save(createNewOppositePlayer(nameOpposite));
-        game.setPlayer1(nameActing);
-        game.setPlayer2(nameOpposite);
-        game.setPlayersOfGame(new String[]{nameActing, nameOpposite});
-        game.setInitialPlayer1(playerService.findPlayerByName(nameActing));
-        game.setInitialPlayer2(playerService.findPlayerByName(nameOpposite));
+        game.setInitialFirstPlayer(playerService.findPlayerByName(nameActing));
+        game.setInitialSecondPlayer(playerService.findPlayerByName(nameOpposite));
         game.setAsFirst(true);
         gameRepository.saveAndFlush(game);
         return game;
     }
 
     @Transactional
-    public Game updateGame (Game game, int i) {
+    public Game updateGame (long id, int i) {
 
-        Game thisgame = gameRepository.findOne(game.getId());
-        thisgame.setTempNumber(i);
-        return thisgame;
+        Game thisGame = gameRepository.findOne(id);
+        thisGame.setNumberOfPitForLastMove(i);
+        return thisGame;
     }
 
     @Transactional

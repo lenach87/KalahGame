@@ -1,10 +1,7 @@
 package mykalah.mvc;
 
 import mykalah.data.*;
-
 import mykalah.service.GameService;
-
-import mykalah.service.MoveService;
 import mykalah.service.PitService;
 import mykalah.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -35,26 +31,26 @@ public class MainController {
 	}
 
     @RequestMapping(method = RequestMethod.GET)
-    public String startpage(Model model) {
+    public String startPage(Model model) {
         Game gameForm = new Game();
         model.addAttribute("playersForm", gameForm);
         return "index";
     }
 
 	@RequestMapping(method = RequestMethod.POST)
-	public RedirectView startgame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
+	public RedirectView startGame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
 
-		Game game = gameService.makeGame(gameForm.getPlayer1(), gameForm.getPlayer2());
-		game = gameService.updateGame(game, 0);
+		Game game = gameService.makeGame(gameForm.getFirstName(), gameForm.getSecondName());
+		game = gameService.updateGame(game.getId(), 0);
 		redirectAttrs.addFlashAttribute("makeMove", game);
-		RedirectView redirectView = new RedirectView();
-		redirectView.setContextRelative(true);
-		redirectView.setUrl("/makeMove");
-		return redirectView;
+		RedirectView gameBoard = new RedirectView();
+		gameBoard.setContextRelative(true);
+		gameBoard.setUrl("/makeMove");
+		return gameBoard;
 	}
 
 	@RequestMapping(value = "/makeMove", method = RequestMethod.GET)
-	public ModelAndView gameboard (Model model, RedirectAttributes redirectAttrs, HttpServletRequest request, Model map) {
+	public ModelAndView gameBoard (Model model, Model map) {
 		Game game = (Game) model.asMap().get("makeMove");
 		map.addAttribute("id", game.getId());
 		return new ModelAndView("makeMove", "makeMove", game);
@@ -62,38 +58,47 @@ public class MainController {
 
 	@RequestMapping(value = "/makeMove", method = RequestMethod.POST)
 	public RedirectView makeMove(@RequestParam("id") long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-		int i = Integer.parseInt(request.getParameter("tempNumber"));
+
+		int i = Integer.parseInt(request.getParameter("numberOfPitForLastMove"));
 		Game newGame = gameService.findOne(id);
 		boolean result = pitService.makeMove(newGame.getId(), i);
-		newGame = gameService.findOne(gameService.updateGame(gameService.findOne(newGame.getId()), i).getId());
-		if (playerService.findPlayerByName(newGame.getInitialPlayer1().getName()).isInTurn()) {
+		newGame = gameService.updateGame(newGame.getId(), i);
+
+		if (playerService.findPlayerByName(newGame.getFirstName()).isInTurn()) {
 			newGame.setAsFirst(true);
+
 		}
 		else {
 			newGame.setAsFirst(false);
+
 		}
-		redirectAttributes.addFlashAttribute("makeMove", newGame);
-		RedirectView redirectView = new RedirectView();
-		redirectView.setContextRelative(true);
-		redirectView.setUrl("/makeMove");
-		RedirectView redirectView2 = new RedirectView();
-		redirectView2.setContextRelative(true);
-		redirectView2.setUrl("/result");
+
+		RedirectView gameBoard = new RedirectView();
+		gameBoard.setContextRelative(true);
+		gameBoard.setUrl("/makeMove");
+		RedirectView resultPage = new RedirectView();
+		resultPage.setContextRelative(true);
+		resultPage.setUrl("/result");
 		if (result) {
-				if (pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer1().getName()))>pitService.getStonesCount(playerService.findPlayerByName(newGame.getInitialPlayer2().getName()))) {
-				return redirectView2;
+			if (pitService.checkIfFirstIsTheWinner(newGame.getInitialFirstPlayer(), newGame.getInitialSecondPlayer())) {
+				newGame.setWinner(newGame.getFirstName());
+				redirectAttributes.addFlashAttribute("makeMove", newGame);
+				return resultPage;
 			}
 			else {
-				return redirectView2;
+				newGame.setWinner(newGame.getSecondName());
+				redirectAttributes.addFlashAttribute("makeMove", newGame);
+				return resultPage;
 			}
 		}
 		else {
-			return redirectView;
+			redirectAttributes.addFlashAttribute("makeMove", newGame);
+			return gameBoard;
 		}
 	}
 
 	@RequestMapping(value = "/result", method = RequestMethod.GET)
-	public ModelAndView result(Model model, RedirectAttributes redirectAttrs) {
+	public ModelAndView resultPage(Model model) {
 		Game game = (Game) model.asMap().get("makeMove");
 		String winner = game.getWinner();
 		return new ModelAndView("result", "winner", winner);

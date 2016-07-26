@@ -8,6 +8,9 @@ import java.io.Serializable;
 public class Pit implements Serializable {
     static final long serialVersionUID = 42L;
 
+    public Pit() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "PIT_ID")
@@ -42,8 +45,5 @@ public class Pit implements Serializable {
 
     public void setStonesInPit(int stonesInPit) {
         this.stonesInPit = stonesInPit;
-    }
-
-    public Pit() {
     }
 }

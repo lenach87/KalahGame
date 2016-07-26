@@ -8,20 +8,20 @@
 </head>
 <body>
 <div class="form-group">
-  <c:url var="pit" value="${rootURL}makeMove" />
-  <form:form method="post" modelAttribute="makeMove" action="${pit}"
+
+  <form:form method="post" modelAttribute="makeMove" action="${rootURL}makeMove"
              class="form-horizontal" role="form" cssStyle="width: 800px; margin: 0 auto;">
     <form:hidden path="id"/>
-    <input type="number" name="tempNumber"/>
+    <input type="number" name="numberOfPitForLastMove"/>
     <button type="submit" class="btn btn-primary">
       Make move
     </button>
     <c:choose>
       <c:when test="${makeMove.asFirst==true}">
-        <h2 class="sub-header">Acting player - ${makeMove.player1}  </h2>
+        <h2 class="sub-header">Acting player - ${makeMove.firstName}  </h2>
       </c:when>
       <c:otherwise>
-        <h2 class="sub-header">Acting player - ${makeMove.player2}  </h2>
+        <h2 class="sub-header">Acting player - ${makeMove.secondName}  </h2>
       </c:otherwise>
     </c:choose>
   </form:form>
@@ -31,20 +31,20 @@
   <form class="form-inline">
     <table class="table table-striped">
       <colgroup>
-        <col span="1" style="width: 35%;">
-        <col span="1" style="width: 5%;">
-        <col span="1" style="width: 5%;">
-        <col span="1" style="width: 5%;">
-        <col span="1" style="width: 5%;">
-        <col span="1" style="width: 5%;">
-        <col span="1" style="width: 5%;">
-        <col span="1" style="width: 35%;">
-
+        <col span="1" style="width: 22%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 8%;">
+        <col span="1" style="width: 22%;">
       </colgroup>
 
       <tr>
         <td>
-          <b> Kalah for ${makeMove.player2} </b>
+          <b> Kalah for ${makeMove.secondName} </b>
         </td>
         <td><b>#6</b></td>
         <td><b>#5</b></td>
@@ -52,22 +52,24 @@
         <td><b>#3</b></td>
         <td><b>#2</b></td>
         <td><b>#1</b></td>
+        <td><b></b></td>
       </tr>
       <tr>
-        <td> [ ${makeMove.initialPlayer2.getKalahForPlayer().getStonesInKalah()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getKalahForPlayer().getStonesInKalah()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer2.getPitsForPlayer().get(5).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(5).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer2.getPitsForPlayer().get(4).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(4).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer2.getPitsForPlayer().get(3).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(3).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer2.getPitsForPlayer().get(2).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(2).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer2.getPitsForPlayer().get(1).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(1).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer2.getPitsForPlayer().get(0).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(0).getStonesInPit()} ]
         </td>
+        <td><b></b></td>
         <td>
         </td>
       </tr>
@@ -76,20 +78,22 @@
       <tr>
         <td>
         </td>
-        <td> [ ${makeMove.initialPlayer1.getPitsForPlayer().get(0).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(0).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer1.getPitsForPlayer().get(1).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(1).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer1.getPitsForPlayer().get(2).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(2).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer1.getPitsForPlayer().get(3).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(3).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer1.getPitsForPlayer().get(4).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(4).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer1.getPitsForPlayer().get(5).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(5).getStonesInPit()} ]
         </td>
-        <td> [ ${makeMove.initialPlayer1.getKalahForPlayer().getStonesInKalah()} ]
+        <td><b></b></td>
+        <td> [ ${makeMove.initialFirstPlayer.getKalahForPlayer().getStonesInKalah()} ]
         </td>
+
       </tr>
 
       <tr>
@@ -101,7 +105,8 @@
         <td><b>#4</b></td>
         <td><b>#5</b></td>
         <td><b>#6</b></td>
-        <td> <b> Kalah for ${makeMove.initialPlayer1.getName()} </b>
+        <td><b></b></td>
+        <td> <b> Kalah for ${makeMove.firstName} </b>
         </td>
       </tr>
 

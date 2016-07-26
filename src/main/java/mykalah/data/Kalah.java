@@ -8,6 +8,9 @@ import java.io.Serializable;
 public class Kalah implements Serializable {
     static final long serialVersionUID = 42L;
 
+    public Kalah() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "KALAH_ID")
@@ -16,6 +19,9 @@ public class Kalah implements Serializable {
     @OneToOne (mappedBy = "kalahForPlayer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Player playerOfKalah;
 
+    @Column
+    private int stonesInKalah;
+
     public int getStonesInKalah() {
         return stonesInKalah;
     }
@@ -23,8 +29,6 @@ public class Kalah implements Serializable {
     public void setStonesInKalah(int stonesInKalah) {
         this.stonesInKalah = stonesInKalah;
     }
-
-    private int stonesInKalah;
 
     public long getId() {
         return id;
@@ -40,9 +44,6 @@ public class Kalah implements Serializable {
 
     public void setPlayerOfKalah(Player playerOfKalah) {
         this.playerOfKalah = playerOfKalah;
-    }
-
-    public Kalah() {
     }
 
 }
