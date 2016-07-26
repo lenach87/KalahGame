@@ -214,6 +214,7 @@
       <version>2.6</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <warName>kalah</warName>
         </configuration>
       </plugin>
 
