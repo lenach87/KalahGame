@@ -18,17 +18,17 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/")
 public class MainController {
 
-	private final PlayerService playerService;
-	private final PitService pitService;
-	private final GameService gameService;
+    private final PlayerService playerService;
+    private final PitService pitService;
+    private final GameService gameService;
 
 
-	@Autowired
-	public MainController(PlayerService playerService, PitService pitService, GameService gameService) {
-		this.playerService = playerService;
-		this.pitService = pitService;
-		this.gameService = gameService;
-	}
+    @Autowired
+    public MainController(PlayerService playerService, PitService pitService, GameService gameService) {
+        this.playerService = playerService;
+        this.pitService = pitService;
+        this.gameService = gameService;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String startPage(Model model) {
@@ -37,72 +37,73 @@ public class MainController {
         return "index";
     }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public RedirectView startGame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
 
-		Game game = gameService.makeGame(gameForm.getFirstName(), gameForm.getSecondName());
-		game = gameService.updateGame(game.getId(), 0);
-		redirectAttrs.addFlashAttribute("makeMove", game);
-		RedirectView gameBoard = new RedirectView();
-		gameBoard.setContextRelative(true);
-		gameBoard.setUrl("/makeMove");
-		return gameBoard;
-	}
+    @RequestMapping(method = RequestMethod.POST)
+    public RedirectView startGame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
 
-	@RequestMapping(value = "/makeMove", method = RequestMethod.GET)
-	public ModelAndView gameBoard (Model model, Model map) {
-		Game game = (Game) model.asMap().get("makeMove");
-		map.addAttribute("id", game.getId());
-		return new ModelAndView("makeMove", "makeMove", game);
-	}
+        Game game = gameService.makeGame(gameForm.getFirstName(), gameForm.getSecondName());
+        game = gameService.updateGame(game.getId(), 0);
+        redirectAttrs.addFlashAttribute("makeMove", game);
+        RedirectView gameBoard = new RedirectView();
+        gameBoard.setContextRelative(true);
+        gameBoard.setUrl("/makeMove");
+        return gameBoard;
+    }
 
-	@RequestMapping(value = "/makeMove", method = RequestMethod.POST)
-	public RedirectView makeMove(@RequestParam("id") long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    @RequestMapping(value = "/makeMove", method = RequestMethod.GET)
+    public ModelAndView gameBoard (Model model, Model map) {
+        Game game = (Game) model.asMap().get("makeMove");
+        map.addAttribute("id", game.getId());
+        return new ModelAndView("makeMove", "makeMove", game);
+    }
 
-		int i = Integer.parseInt(request.getParameter("numberOfPitForLastMove"));
-		Game newGame = gameService.findOne(id);
-		boolean result = pitService.makeMove(newGame.getId(), i);
-		newGame = gameService.updateGame(newGame.getId(), i);
+    @RequestMapping(value = "/makeMove", method = RequestMethod.POST)
+    public RedirectView makeMove(@RequestParam("id") long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
-		if (playerService.findPlayerByName(newGame.getFirstName()).isInTurn()) {
-			newGame.setAsFirst(true);
+        int i = Integer.parseInt(request.getParameter("numberOfPitForLastMove"));
+        Game newGame = gameService.findOne(id);
+        boolean result = pitService.makeMove(newGame.getId(), i);
+        newGame = gameService.updateGame(newGame.getId(), i);
 
-		}
-		else {
-			newGame.setAsFirst(false);
+        if (playerService.findPlayerByName(newGame.getFirstName()).isInTurn()) {
+            newGame.setAsFirst(true);
 
-		}
+        }
+        else {
+            newGame.setAsFirst(false);
 
-		RedirectView gameBoard = new RedirectView();
-		gameBoard.setContextRelative(true);
-		gameBoard.setUrl("/makeMove");
-		RedirectView resultPage = new RedirectView();
-		resultPage.setContextRelative(true);
-		resultPage.setUrl("/result");
-		if (result) {
-			if (pitService.checkIfFirstIsTheWinner(newGame.getInitialFirstPlayer(), newGame.getInitialSecondPlayer())) {
-				newGame.setWinner(newGame.getFirstName());
-				redirectAttributes.addFlashAttribute("makeMove", newGame);
-				return resultPage;
-			}
-			else {
-				newGame.setWinner(newGame.getSecondName());
-				redirectAttributes.addFlashAttribute("makeMove", newGame);
-				return resultPage;
-			}
-		}
-		else {
-			redirectAttributes.addFlashAttribute("makeMove", newGame);
-			return gameBoard;
-		}
-	}
+        }
 
-	@RequestMapping(value = "/result", method = RequestMethod.GET)
-	public ModelAndView resultPage(Model model) {
-		Game game = (Game) model.asMap().get("makeMove");
-		String winner = game.getWinner();
-		return new ModelAndView("result", "winner", winner);
-	}
+        RedirectView gameBoard = new RedirectView();
+        gameBoard.setContextRelative(true);
+        gameBoard.setUrl("/makeMove");
+        RedirectView resultPage = new RedirectView();
+        resultPage.setContextRelative(true);
+        resultPage.setUrl("/result");
+        if (result) {
+            if (pitService.checkIfFirstIsTheWinner(newGame.getInitialFirstPlayer(), newGame.getInitialSecondPlayer())) {
+                newGame.setWinner(newGame.getFirstName());
+                redirectAttributes.addFlashAttribute("makeMove", newGame);
+                return resultPage;
+            }
+            else {
+                newGame.setWinner(newGame.getSecondName());
+                redirectAttributes.addFlashAttribute("makeMove", newGame);
+                return resultPage;
+            }
+        }
+        else {
+            redirectAttributes.addFlashAttribute("makeMove", newGame);
+            return gameBoard;
+        }
+    }
+
+    @RequestMapping(value = "/result", method = RequestMethod.GET)
+    public ModelAndView resultPage(Model model) {
+        Game game = (Game) model.asMap().get("makeMove");
+        String winner = game.getWinner();
+        return new ModelAndView("result", "winner", winner);
+    }
 }
 
 

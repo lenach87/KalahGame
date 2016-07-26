@@ -193,6 +193,7 @@ public class PitService {
             if (amountOfStonesForTurn!=1) {
                 for (int i = (amountOfStonesForTurn-1), j = 0; i>0; i--, j++) {
                     increaseStonesInPitByOne(pitsForActing.get(number + j));
+
                 }
             }
         }
@@ -202,11 +203,14 @@ public class PitService {
             if (amountOfStonesForTurn!=1) {
                 for (int i = (amountOfStonesForTurn-1), j = 0; i>0; i--, j++) {
                     increaseStonesInPitByOne(pitsForActing.get(number + j));
+
                 }
             }
         }
 
+
         increaseStonesInKalahByOne(kalahForActing);
+
         if (checkIfEndGame(acting, opposite)) {
             return true;
         } else {
@@ -276,7 +280,7 @@ public class PitService {
                 increaseStonesInPitByOne(pitsForOpposite.get(j));
             }
             leftForActing = amountOfStonesForTurn - 6 - 1;
-            forFirstIteration = 6 - number;
+            forFirstIteration = (6 - number);
             forSecondIteration = leftForActing - forFirstIteration;
             for (int i = forFirstIteration, j = 0; i > 0; i--, j++) {
                 increaseStonesInPitByOne(pitsForActing.get(number + j));
@@ -303,10 +307,10 @@ public class PitService {
             }
         }
         if ((pitsForActing.get(forSecondIteration - 1).getStonesInPit() == 1) &&
-                    (pitsForOpposite.get(5 - (forSecondIteration - 1)).getStonesInPit() != 0)) {
+                (pitsForOpposite.get(5 - (forSecondIteration - 1)).getStonesInPit() != 0)) {
             increaseStonesInKalahByAmount(kalahForActing, (1 + pitsForOpposite.get(5 - (forSecondIteration - 1)).getStonesInPit()));
-                pitsForOpposite.get(5 - (forSecondIteration - 1)).setStonesInPit(0);
-                pitsForActing.get(forSecondIteration - 1).setStonesInPit(0);
+            pitsForOpposite.get(5 - (forSecondIteration - 1)).setStonesInPit(0);
+            pitsForActing.get(forSecondIteration - 1).setStonesInPit(0);
         }
 
         if (checkIfEndGame(acting, opposite)) {
@@ -317,23 +321,23 @@ public class PitService {
             return false;
         }
     }
-        public int makeFullMove (int number, Player acting, Player opposite, int times) {
+    public int makeFullMove (int number, Player acting, Player opposite, int times) {
 
-            List <Pit> pitsForActing = acting.getPitsForPlayer();
-            List <Pit> pitsForOpposite = opposite.getPitsForPlayer();
-            Kalah kalahForActing = acting.getKalahForPlayer();
-            Pit selected = pitsForActing.get(number - 1);
-            int initial = selected.getStonesInPit();
-            selected.setStonesInPit(0);
-            for (int i = 6, j = 0; i > 0; i--, j++) {
-                pitsForActing.get(j).setStonesInPit(pitsForActing.get(j).getStonesInPit()+times);
-            }
-            increaseStonesInKalahByAmount(kalahForActing, times);
-            for (int i = 6, j = 0; i > 0; i--, j++) {
-                pitsForOpposite.get(j).setStonesInPit(pitsForOpposite.get(j).getStonesInPit()+times);
-            }
-            return initial;
+        List <Pit> pitsForActing = acting.getPitsForPlayer();
+        List <Pit> pitsForOpposite = opposite.getPitsForPlayer();
+        Kalah kalahForActing = acting.getKalahForPlayer();
+        Pit selected = pitsForActing.get(number - 1);
+        int initial = selected.getStonesInPit();
+        selected.setStonesInPit(0);
+        for (int i = 6, j = 0; i > 0; i--, j++) {
+            pitsForActing.get(j).setStonesInPit(pitsForActing.get(j).getStonesInPit()+times);
         }
+        increaseStonesInKalahByAmount(kalahForActing, times);
+        for (int i = 6, j = 0; i > 0; i--, j++) {
+            pitsForOpposite.get(j).setStonesInPit(pitsForOpposite.get(j).getStonesInPit()+times);
+        }
+        return initial;
+    }
 
 
     public void increaseStonesInPitByOne(Pit pit) {
@@ -346,5 +350,5 @@ public class PitService {
 
     public void increaseStonesInKalahByAmount(Kalah kalah, int amount) {
         kalah.setStonesInKalah(kalah.getStonesInKalah()+amount);
-    };
     }
+}
