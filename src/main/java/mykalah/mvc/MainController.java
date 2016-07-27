@@ -1,9 +1,7 @@
 package mykalah.mvc;
 
 import mykalah.data.*;
-import mykalah.service.GameService;
-import mykalah.service.PitService;
-import mykalah.service.PlayerService;
+import mykalah.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +40,7 @@ public class MainController {
     public RedirectView startGame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
 
         Game game = gameService.makeGame(gameForm.getFirstName(), gameForm.getSecondName());
-        game = gameService.updateGame(game.getId(), 0);
+//        game = gameService.updateGame(game.getId(), 0);
         redirectAttrs.addFlashAttribute("makeMove", game);
         RedirectView gameBoard = new RedirectView();
         gameBoard.setContextRelative(true);
