@@ -7,7 +7,7 @@
 <body>
 
 <div class="container-fluid">
-      <h2 class="sub-header">The winner is ${winner}</h2>
+    <h2 class="sub-header">The winner is ${winner}</h2>
 </div>
 </body>
 </html>

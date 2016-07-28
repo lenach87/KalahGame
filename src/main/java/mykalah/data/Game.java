@@ -16,9 +16,11 @@ public class Game implements Serializable {
     private long id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn (name = "InitialPlayer1")
     private Player initialFirstPlayer;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn (name = "InitialPlayer2")
     private Player initialSecondPlayer;
 
     @Column

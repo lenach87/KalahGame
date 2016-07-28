@@ -2,6 +2,7 @@ package mykalah.data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 
 @Entity
@@ -18,13 +19,18 @@ public class Player implements Serializable {
 
     @Column(unique = true)
     private String name;
-
+    @Column
     private int[] pitsForPlayer;
-
+    @Column
     private int kalahForPlayer;
 
     @Column
     private boolean inTurn;
+
+    @OneToMany(mappedBy = "initialFirstPlayer", cascade = CascadeType.ALL)
+    private List<Game> gamesAsInitialPlayer1;
+    @OneToMany(mappedBy = "initialSecondPlayer", cascade = CascadeType.ALL)
+    private List<Game> gamesAsInitialPlayer2;
 
     public boolean isInTurn() {
         return inTurn;
@@ -64,5 +70,21 @@ public class Player implements Serializable {
 
     public void setKalahForPlayer(int kalahForPlayer) {
         this.kalahForPlayer = kalahForPlayer;
+    }
+
+    public List<Game> getGamesAsInitialPlayer1() {
+        return gamesAsInitialPlayer1;
+    }
+
+    public void setGamesAsInitialPlayer1(List<Game> gamesAsInitialPlayer1) {
+        this.gamesAsInitialPlayer1 = gamesAsInitialPlayer1;
+    }
+
+    public List<Game> getGamesAsInitialPlayer2() {
+        return gamesAsInitialPlayer2;
+    }
+
+    public void setGamesAsInitialPlayer2(List<Game> gamesAsInitialPlayer2) {
+        this.gamesAsInitialPlayer2 = gamesAsInitialPlayer2;
     }
 }
