@@ -19,12 +19,9 @@ public class Player implements Serializable {
     @Column (unique = true)
     private String name;
 
-    @OneToMany (mappedBy = "playerOfPits", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Pit> pitsForPlayer;
+    private int[] pitsForPlayer;
 
-    @OneToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn (name = "Kalah")
-    private Kalah kalahForPlayer;
+    private int kalahForPlayer;
 
     @OneToMany (mappedBy = "initialFirstPlayer", cascade = CascadeType.ALL)
     private List <Game> gamesAsInitialPlayer1;
@@ -75,18 +72,35 @@ public class Player implements Serializable {
         this.name = name;
     }
 
-    public List<Pit> getPitsForPlayer() {
+    public int [] getPitsForPlayer() {
         return pitsForPlayer;
     }
 
-    public void setPitsForPlayer(List<Pit> pitsForPlayer) {this.pitsForPlayer = pitsForPlayer;}
+    public void setPitsForPlayer(int [] pitsForPlayer) {
+        this.pitsForPlayer = pitsForPlayer;
+    }
 
-    public Kalah getKalahForPlayer() {
+    public int getKalahForPlayer() {
         return kalahForPlayer;
     }
 
-    public void setKalahForPlayer(Kalah kalahForPlayer) {
+    public void setKalahForPlayer(int kalahForPlayer) {
         this.kalahForPlayer = kalahForPlayer;
     }
 
+    public List<Game> getGamesAsInitialPlayer1() {
+        return gamesAsInitialPlayer1;
+    }
+
+    public void setGamesAsInitialPlayer1(List<Game> gamesAsInitialPlayer1) {
+        this.gamesAsInitialPlayer1 = gamesAsInitialPlayer1;
+    }
+
+    public List<Game> getGamesAsInitialPlayer2() {
+        return gamesAsInitialPlayer2;
+    }
+
+    public void setGamesAsInitialPlayer2(List<Game> gamesAsInitialPlayer2) {
+        this.gamesAsInitialPlayer2 = gamesAsInitialPlayer2;
+    }
 }

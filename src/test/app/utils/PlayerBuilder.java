@@ -1,12 +1,8 @@
 package utils;
 
-import mykalah.data.Game;
-import mykalah.data.Kalah;
-import mykalah.data.Pit;
 import mykalah.data.Player;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.persistence.*;
 import java.util.List;
 
 public class PlayerBuilder {
@@ -29,12 +25,12 @@ public class PlayerBuilder {
         return this;
     }
 
-    public PlayerBuilder pitsForPlayer(List<Pit> pitsForPlayer) {
+    public PlayerBuilder pitsForPlayer(int[] pitsForPlayer) {
         ReflectionTestUtils.setField(model, "pitsForPlayer", pitsForPlayer);
         return this;
     }
 
-    public PlayerBuilder kalahForPlayer(Kalah kalahForPlayer) {
+    public PlayerBuilder kalahForPlayer(int kalahForPlayer) {
         ReflectionTestUtils.setField(model, "kalahForPlayer", kalahForPlayer);
         return this;
     }

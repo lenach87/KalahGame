@@ -55,19 +55,19 @@
         <td><b></b></td>
       </tr>
       <tr>
-        <td> [ ${makeMove.initialSecondPlayer.getKalahForPlayer().getStonesInKalah()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getKalahForPlayer()} ]
         </td>
-        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(5).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer()[5]} ]
         </td>
-        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(4).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer()[4]} ]
         </td>
-        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(3).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer()[3]} ]
         </td>
-        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(2).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer()[2]} ]
         </td>
-        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(1).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer()[1]} ]
         </td>
-        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer().get(0).getStonesInPit()} ]
+        <td> [ ${makeMove.initialSecondPlayer.getPitsForPlayer()[0]} ]
         </td>
         <td><b></b></td>
         <td>
@@ -78,20 +78,20 @@
       <tr>
         <td>
         </td>
-        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(0).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer()[0]} ]
         </td>
-        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(1).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer()[1]} ]
         </td>
-        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(2).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer()[2]} ]
         </td>
-        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(3).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer()[3]} ]
         </td>
-        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(4).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer()[4]} ]
         </td>
-        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer().get(5).getStonesInPit()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getPitsForPlayer()[5]} ]
         </td>
         <td><b></b></td>
-        <td> [ ${makeMove.initialFirstPlayer.getKalahForPlayer().getStonesInKalah()} ]
+        <td> [ ${makeMove.initialFirstPlayer.getKalahForPlayer()} ]
         </td>
 
       </tr>

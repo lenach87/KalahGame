@@ -2,6 +2,8 @@ package mykalah.mvc;
 
 import mykalah.data.*;
 import mykalah.service.*;
+import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,15 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/")
 public class MainController {
 
+    Logger logger = Logger.getLogger(mykalah.mvc.MainController.class);
+
     private final PlayerService playerService;
-    private final PitService pitService;
     private final GameService gameService;
 
 
     @Autowired
-    public MainController(PlayerService playerService, PitService pitService, GameService gameService) {
+    public MainController(PlayerService playerService, GameService gameService) {
         this.playerService = playerService;
-        this.pitService = pitService;
         this.gameService = gameService;
     }
 
@@ -40,7 +42,6 @@ public class MainController {
     public RedirectView startGame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
 
         Game game = gameService.makeGame(gameForm.getFirstName(), gameForm.getSecondName());
-//        game = gameService.updateGame(game.getId(), 0);
         redirectAttrs.addFlashAttribute("makeMove", game);
         RedirectView gameBoard = new RedirectView();
         gameBoard.setContextRelative(true);
@@ -49,9 +50,9 @@ public class MainController {
     }
 
     @RequestMapping(value = "/makeMove", method = RequestMethod.GET)
-    public ModelAndView gameBoard (Model model, Model map) {
+    public ModelAndView gameBoard (Model model) {
         Game game = (Game) model.asMap().get("makeMove");
-        map.addAttribute("id", game.getId());
+        model.addAttribute("id", game.getId());
         return new ModelAndView("makeMove", "makeMove", game);
     }
 
@@ -60,7 +61,7 @@ public class MainController {
 
         int i = Integer.parseInt(request.getParameter("numberOfPitForLastMove"));
         Game newGame = gameService.findOne(id);
-        boolean result = pitService.makeMove(newGame.getId(), i);
+        boolean result = gameService.makeMove(newGame.getId(), i);
         newGame = gameService.updateGame(newGame.getId(), i);
 
         if (playerService.findPlayerByName(newGame.getFirstName()).isInTurn()) {
@@ -71,7 +72,6 @@ public class MainController {
             newGame.setAsFirst(false);
 
         }
-
         RedirectView gameBoard = new RedirectView();
         gameBoard.setContextRelative(true);
         gameBoard.setUrl("/makeMove");
@@ -79,16 +79,8 @@ public class MainController {
         resultPage.setContextRelative(true);
         resultPage.setUrl("/result");
         if (result) {
-            if (pitService.checkIfFirstIsTheWinner(newGame.getInitialFirstPlayer(), newGame.getInitialSecondPlayer())) {
-                newGame.setWinner(newGame.getFirstName());
-                redirectAttributes.addFlashAttribute("makeMove", newGame);
-                return resultPage;
-            }
-            else {
-                newGame.setWinner(newGame.getSecondName());
-                redirectAttributes.addFlashAttribute("makeMove", newGame);
-                return resultPage;
-            }
+            redirectAttributes.addFlashAttribute("makeMove", newGame);
+            return resultPage;
         }
         else {
             redirectAttributes.addFlashAttribute("makeMove", newGame);
