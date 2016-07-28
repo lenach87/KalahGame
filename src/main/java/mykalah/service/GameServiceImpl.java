@@ -1,6 +1,8 @@
 package mykalah.service;
 
-import mykalah.data.*;
+import mykalah.data.Game;
+import mykalah.data.GameRepository;
+import mykalah.data.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -8,10 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@Transactional(isolation= Isolation.SERIALIZABLE)
+@Transactional(isolation = Isolation.SERIALIZABLE)
 public class GameServiceImpl implements GameService {
 
-    public GameServiceImpl() {}
+    public GameServiceImpl() {
+    }
 
     @Autowired
     private GameRepository gameRepository;
@@ -19,12 +22,12 @@ public class GameServiceImpl implements GameService {
     @Autowired
     private PlayerService playerService;
 
-    public Game findOne (long id) {
+    public Game findOne(long id) {
         return gameRepository.findOne(id);
     }
 
     @Transactional
-    public Game makeGame (String nameActing, String nameOpposite) {
+    public Game makeGame(String nameActing, String nameOpposite) {
 
         Game game = new Game();
         playerService.save(createNewActingPlayer(nameActing));
@@ -37,7 +40,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Transactional
-    public Game updateGame (long id, int i) {
+    public Game updateGame(long id, int i) {
 
         Game thisGame = gameRepository.findOne(id);
         thisGame.setNumberOfPitForLastMove(i);
@@ -45,28 +48,29 @@ public class GameServiceImpl implements GameService {
     }
 
     @Transactional
-    public Player createNewActingPlayer (String name) {
+    public Player createNewActingPlayer(String name) {
         Player newPlayer = new Player();
         newPlayer.setName(name);
         newPlayer.setKalahForPlayer(0);
-        int[] pits = new int [] {6,6,6,6,6,6};
+        int[] pits = new int[]{6, 6, 6, 6, 6, 6};
         newPlayer.setPitsForPlayer(pits);
         newPlayer.setInTurn(true);
         return newPlayer;
     }
+
     @Transactional
-    public Player createNewOppositePlayer (String name) {
+    public Player createNewOppositePlayer(String name) {
         Player newPlayer = new Player();
         newPlayer.setName(name);
         newPlayer.setKalahForPlayer(0);
-        int[] pits = new int [] {6,6,6,6,6,6};
+        int[] pits = new int[]{6, 6, 6, 6, 6, 6};
         newPlayer.setPitsForPlayer(pits);
         newPlayer.setInTurn(false);
         return newPlayer;
     }
 
-    public boolean makeMove (long gameId, int number) {
-        if (number == 0||number>6) {
+    public boolean makeMove(long gameId, int number) {
+        if (number == 0 || number > 6) {
             return false;
         }
 
@@ -80,15 +84,14 @@ public class GameServiceImpl implements GameService {
         } else if (second.isInTurn()) {
             acting = second;
             opposite = first;
-        }
-        else {
+        } else {
             first.setInTurn(true);
             second.setInTurn(false);
             acting = first;
             opposite = second;
         }
-        int [] pitsForActing = acting.getPitsForPlayer();
-        int [] pitsForOpposite = opposite.getPitsForPlayer();
+        int[] pitsForActing = acting.getPitsForPlayer();
+        int[] pitsForOpposite = opposite.getPitsForPlayer();
         int selected = number - 1;
         int amountOfStonesForTurn = pitsForActing[selected];
 
@@ -115,38 +118,36 @@ public class GameServiceImpl implements GameService {
         /* Check if will make less than one full round
          */
         if (amountOfStonesForTurn <= 12) {
-            return makeMoveEndActingPitNotFullRound (number, acting, opposite, 0, 0, gameId);
+            return makeMoveEndActingPitNotFullRound(number, acting, opposite, 0, 0, gameId);
         }
         /* If will make full round several times
          */
         else {
-            int left = amountOfStonesForTurn%13;
-            int times = amountOfStonesForTurn/13;
-            if (left==0) {
+            int left = amountOfStonesForTurn % 13;
+            int times = amountOfStonesForTurn / 13;
+            if (left == 0) {
                 makeFullMove(number, acting, opposite, times);
                 if (times == 1) {
-                    if (pitsForOpposite[5-selected]!=0) {
-                        acting.setKalahForPlayer(acting.getKalahForPlayer() + 1 + pitsForOpposite[5-selected]);
-                        pitsForOpposite[5-selected]=0;
-                        pitsForActing[selected]=0;
+                    if (pitsForOpposite[5 - selected] != 0) {
+                        acting.setKalahForPlayer(acting.getKalahForPlayer() + 1 + pitsForOpposite[5 - selected]);
+                        pitsForOpposite[5 - selected] = 0;
+                        pitsForActing[selected] = 0;
                     }
                 }
                 if (checkIfEndGame(acting, opposite)) {
                     if (checkIfFirstIsTheWinner(acting, opposite)) {
                         findOne(gameId).setWinner(acting.getName());
-                    }
-                    else {
+                    } else {
                         findOne(gameId).setWinner(opposite.getName());
                     }
                     return true;
-                }
-                else {
+                } else {
                     acting.setInTurn(false);
                     opposite.setInTurn(true);
                     return false;
                 }
             }
-            if (left<=(6 - number)) {
+            if (left <= (6 - number)) {
                 int initial = makeFullMove(number, acting, opposite, times);
                 return makeMoveEndActivePit(number, acting, opposite, times, initial, gameId);
             }
@@ -157,10 +158,9 @@ public class GameServiceImpl implements GameService {
             if (left <= (6 - number + 1 + 6)) {
                 int initial = makeFullMove(number, acting, opposite, times);
                 return makeMoveEndOppositePit(number, acting, opposite, times, initial, gameId);
-            }
-            else {
+            } else {
                 int initial = makeFullMove(number, acting, opposite, times);
-                return makeMoveEndActingPitNotFullRound (number, acting, opposite, times, initial, gameId);
+                return makeMoveEndActingPitNotFullRound(number, acting, opposite, times, initial, gameId);
             }
         }
     }
@@ -168,62 +168,55 @@ public class GameServiceImpl implements GameService {
     /* Check if end of the game
      */
 
-    public boolean checkIfEndGame (Player actingPlayer, Player oppositePlayer) {
+    public boolean checkIfEndGame(Player actingPlayer, Player oppositePlayer) {
 
-        if (actingPlayer.getKalahForPlayer()>36) {
+        if (actingPlayer.getKalahForPlayer() > 36) {
             return true;
         }
-        if (getStonesCountInPits(oppositePlayer)==0||getStonesCountInPits(actingPlayer)==0) {
-            actingPlayer.setKalahForPlayer(actingPlayer.getKalahForPlayer()+getStonesCountInPits(actingPlayer));
-            oppositePlayer.setKalahForPlayer(oppositePlayer.getKalahForPlayer()+getStonesCountInPits(oppositePlayer));
+        if (getStonesCountInPits(oppositePlayer) == 0 || getStonesCountInPits(actingPlayer) == 0) {
+            actingPlayer.setKalahForPlayer(actingPlayer.getKalahForPlayer() + getStonesCountInPits(actingPlayer));
+            oppositePlayer.setKalahForPlayer(oppositePlayer.getKalahForPlayer() + getStonesCountInPits(oppositePlayer));
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
-    public boolean checkIfFirstIsTheWinner (Player first, Player second) {
-        if (first.getKalahForPlayer()>second.getKalahForPlayer()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean checkIfFirstIsTheWinner(Player first, Player second) {
+        return first.getKalahForPlayer() > second.getKalahForPlayer();
     }
 
-   public int getStonesCountInPits (Player player) {
+    public int getStonesCountInPits(Player player) {
         int i = 0;
-        for (int pit:player.getPitsForPlayer()) {
-            i+=pit;
+        for (int pit : player.getPitsForPlayer()) {
+            i += pit;
         }
         return i;
     }
 
 
-    public boolean makeMoveEndActivePit (int number, Player acting, Player opposite, int times, int initial, long gameId) {
-        int [] pitsForActing = acting.getPitsForPlayer();
-        int [] pitsForOpposite = opposite.getPitsForPlayer();
+    public boolean makeMoveEndActivePit(int number, Player acting, Player opposite, int times, int initial, long gameId) {
+        int[] pitsForActing = acting.getPitsForPlayer();
+        int[] pitsForOpposite = opposite.getPitsForPlayer();
         int amountOfStonesForTurn;
         int selected = number - 1;
-        if (initial==0) {
+        if (initial == 0) {
             amountOfStonesForTurn = pitsForActing[selected];
-            pitsForActing[selected]=times;
+            pitsForActing[selected] = times;
             for (int i = amountOfStonesForTurn, j = 0; i > 0; i--, j++) {
-                pitsForActing[number + j]=pitsForActing[number + j]+1;
+                pitsForActing[number + j] = pitsForActing[number + j] + 1;
+            }
+        } else {
+            amountOfStonesForTurn = (initial - 13 * times);
+            pitsForActing[selected] = times;
+            for (int i = amountOfStonesForTurn, j = 0; i > 0; i--, j++) {
+                pitsForActing[number + j] = pitsForActing[number + j] + 1;
             }
         }
-        else {
-            amountOfStonesForTurn = (initial - 13*times);
-            pitsForActing[selected]=times;
-            for (int i = amountOfStonesForTurn, j = 0; i > 0; i--, j++) {
-                pitsForActing[number + j]=pitsForActing[number + j]+1;
-            }
-        }
-        if (pitsForActing[number + amountOfStonesForTurn - 1] == 1 && pitsForOpposite[5 - (number + amountOfStonesForTurn - 1)]!= 0) {
-            acting.setKalahForPlayer(acting.getKalahForPlayer()+ (1 + pitsForOpposite[5 - (number + amountOfStonesForTurn - 1)]));
-            pitsForOpposite[5 - (number + amountOfStonesForTurn - 1)]=0;
-            pitsForActing[number + amountOfStonesForTurn - 1]=0;
+        if (pitsForActing[number + amountOfStonesForTurn - 1] == 1 && pitsForOpposite[5 - (number + amountOfStonesForTurn - 1)] != 0) {
+            acting.setKalahForPlayer(acting.getKalahForPlayer() + (1 + pitsForOpposite[5 - (number + amountOfStonesForTurn - 1)]));
+            pitsForOpposite[5 - (number + amountOfStonesForTurn - 1)] = 0;
+            pitsForActing[number + amountOfStonesForTurn - 1] = 0;
         }
 
         if (checkIfEndGame(acting, opposite)) {
@@ -231,8 +224,7 @@ public class GameServiceImpl implements GameService {
             opposite.setPitsForPlayer(pitsForOpposite);
             if (checkIfFirstIsTheWinner(acting, opposite)) {
                 findOne(gameId).setWinner(acting.getName());
-            }
-            else {
+            } else {
                 findOne(gameId).setWinner(opposite.getName());
             }
             return true;
@@ -245,97 +237,92 @@ public class GameServiceImpl implements GameService {
         }
     }
 
-    public boolean makeMoveEndActiveKalah (int number, Player acting, Player opposite, int times, int initial, long gameId) {
-        int [] pitsForActing = acting.getPitsForPlayer();
+    public boolean makeMoveEndActiveKalah(int number, Player acting, Player opposite, int times, int initial, long gameId) {
+        int[] pitsForActing = acting.getPitsForPlayer();
         int selected = number - 1;
         int amountOfStonesForTurn;
-        if (initial==0) {
+        if (initial == 0) {
             amountOfStonesForTurn = pitsForActing[selected];
-            pitsForActing[selected]=times;
-            if (amountOfStonesForTurn!=1) {
-                for (int i = (amountOfStonesForTurn-1), j = 0; i>0; i--, j++) {
-                    pitsForActing[number + j] = pitsForActing[number + j]+1;
+            pitsForActing[selected] = times;
+            if (amountOfStonesForTurn != 1) {
+                for (int i = (amountOfStonesForTurn - 1), j = 0; i > 0; i--, j++) {
+                    pitsForActing[number + j] = pitsForActing[number + j] + 1;
+                }
+            }
+        } else {
+            amountOfStonesForTurn = initial - 13 * times;
+            pitsForActing[selected] = times;
+            if (amountOfStonesForTurn != 1) {
+                for (int i = (amountOfStonesForTurn - 1), j = 0; i > 0; i--, j++) {
+                    pitsForActing[number + j] = pitsForActing[number + j] + 1;
+
                 }
             }
         }
-        else {
-            amountOfStonesForTurn = initial - 13*times;
-            pitsForActing[selected]=times;
-            if (amountOfStonesForTurn!=1) {
-                for (int i = (amountOfStonesForTurn-1), j = 0; i>0; i--, j++) {
-                    pitsForActing[number + j] = pitsForActing[number + j]+1;
-
-                }
-            }
-        }
 
 
-        acting.setKalahForPlayer(acting.getKalahForPlayer()+1);
+        acting.setKalahForPlayer(acting.getKalahForPlayer() + 1);
 
         if (checkIfEndGame(acting, opposite)) {
             acting.setPitsForPlayer(pitsForActing);
             if (checkIfFirstIsTheWinner(acting, opposite)) {
                 findOne(gameId).setWinner(acting.getName());
-            }
-            else {
+            } else {
                 findOne(gameId).setWinner(opposite.getName());
             }
             return true;
 
         } else {
             acting.setPitsForPlayer(pitsForActing);
-        return false;
+            return false;
         }
     }
 
-    public boolean makeMoveEndOppositePit (int number, Player acting, Player opposite, int times, int initial, long gameId) {
-        int [] pitsForActing = acting.getPitsForPlayer();
-        int [] pitsForOpposite = opposite.getPitsForPlayer();
+    public boolean makeMoveEndOppositePit(int number, Player acting, Player opposite, int times, int initial, long gameId) {
+        int[] pitsForActing = acting.getPitsForPlayer();
+        int[] pitsForOpposite = opposite.getPitsForPlayer();
 
         int selected = number - 1;
         int amountOfStonesForTurn;
-        if (initial==0) {
+        if (initial == 0) {
             amountOfStonesForTurn = pitsForActing[selected];
-            pitsForActing[selected]=times;
+            pitsForActing[selected] = times;
             int usedForActing = 0;
             for (int i = number, j = 1; i < 6; i++, j++) {
-                pitsForActing[i]+=1;
+                pitsForActing[i] += 1;
                 usedForActing = j;
             }
-            acting.setKalahForPlayer(acting.getKalahForPlayer()+1);
+            acting.setKalahForPlayer(acting.getKalahForPlayer() + 1);
             usedForActing += 1;
             for (int i = (amountOfStonesForTurn - usedForActing), j = 0; i > 0; i--, j++) {
-                pitsForOpposite[j]+=1;
+                pitsForOpposite[j] += 1;
             }
-        }
-        else {
-            amountOfStonesForTurn = initial - 13*times;
-            pitsForActing[selected]=times;
+        } else {
+            amountOfStonesForTurn = initial - 13 * times;
+            pitsForActing[selected] = times;
             int usedForActing = 0;
             for (int i = number, j = 1; i < 6; i++, j++) {
-                pitsForActing[i]+=1;
+                pitsForActing[i] += 1;
                 usedForActing = j;
             }
-            acting.setKalahForPlayer(acting.getKalahForPlayer()+1);
+            acting.setKalahForPlayer(acting.getKalahForPlayer() + 1);
             usedForActing += 1;
             for (int i = (amountOfStonesForTurn - usedForActing), j = 0; i > 0; i--, j++) {
-                pitsForOpposite[j]+=1;
+                pitsForOpposite[j] += 1;
             }
         }
-      //  pitsForActing[selected]=times;
+        //  pitsForActing[selected]=times;
 
         if (checkIfEndGame(acting, opposite)) {
             acting.setPitsForPlayer(pitsForActing);
             opposite.setPitsForPlayer(pitsForOpposite);
             if (checkIfFirstIsTheWinner(acting, opposite)) {
                 findOne(gameId).setWinner(acting.getName());
-            }
-            else {
+            } else {
                 findOne(gameId).setWinner(opposite.getName());
             }
             return true;
-        }
-        else {
+        } else {
             acting.setPitsForPlayer(pitsForActing);
             opposite.setPitsForPlayer(pitsForOpposite);
             acting.setInTurn(false);
@@ -343,53 +330,53 @@ public class GameServiceImpl implements GameService {
             return false;
         }
     }
-    public boolean makeMoveEndActingPitNotFullRound (int number, Player acting, Player opposite, int times, int initial, long gameId) {
-        int [] pitsForActing = acting.getPitsForPlayer();
-        int [] pitsForOpposite = opposite.getPitsForPlayer();
+
+    public boolean makeMoveEndActingPitNotFullRound(int number, Player acting, Player opposite, int times, int initial, long gameId) {
+        int[] pitsForActing = acting.getPitsForPlayer();
+        int[] pitsForOpposite = opposite.getPitsForPlayer();
         int selected = number - 1;
         int amountOfStonesForTurn;
         int leftForActing;
         int forFirstIteration;
         int forSecondIteration;
-        if (initial==0) {
+        if (initial == 0) {
             amountOfStonesForTurn = pitsForActing[selected];
-            pitsForActing[selected]=times;
-            acting.setKalahForPlayer(acting.getKalahForPlayer()+1);
+            pitsForActing[selected] = times;
+            acting.setKalahForPlayer(acting.getKalahForPlayer() + 1);
             for (int i = 6, j = 0; i > 0; i--, j++) {
-                pitsForOpposite[j]+=1;
+                pitsForOpposite[j] += 1;
             }
             leftForActing = amountOfStonesForTurn - 6 - 1;
             forFirstIteration = (6 - number);
             forSecondIteration = leftForActing - forFirstIteration;
             for (int i = forFirstIteration, j = 0; i > 0; i--, j++) {
-                pitsForActing[number + j]+=1;
+                pitsForActing[number + j] += 1;
             }
             for (int i = forSecondIteration, j = 0; i > 0; i--, j++) {
-                pitsForActing[j]+=1;
+                pitsForActing[j] += 1;
             }
-        }
-        else {
-            amountOfStonesForTurn = initial - 13*times;
-            pitsForActing[selected]=times;
-            acting.setKalahForPlayer(acting.getKalahForPlayer()+1);
+        } else {
+            amountOfStonesForTurn = initial - 13 * times;
+            pitsForActing[selected] = times;
+            acting.setKalahForPlayer(acting.getKalahForPlayer() + 1);
             for (int i = 6, j = 0; i > 0; i--, j++) {
-                pitsForOpposite[j]+=1;
+                pitsForOpposite[j] += 1;
             }
             leftForActing = amountOfStonesForTurn - 6 - 1;
             forFirstIteration = 6 - number;
             forSecondIteration = leftForActing - forFirstIteration;
             for (int i = forFirstIteration, j = 0; i > 0; i--, j++) {
-                pitsForActing[number + j]+=1;
+                pitsForActing[number + j] += 1;
             }
             for (int i = forSecondIteration, j = 0; i > 0; i--, j++) {
-                pitsForActing[j]+=1;
+                pitsForActing[j] += 1;
             }
         }
         if ((pitsForActing[forSecondIteration - 1] == 1) &&
                 (pitsForOpposite[5 - (forSecondIteration - 1)] != 0)) {
             acting.setKalahForPlayer(acting.getKalahForPlayer() + (1 + pitsForOpposite[5 - (forSecondIteration - 1)]));
-            pitsForOpposite[5 - (forSecondIteration - 1)]=0;
-            pitsForActing[forSecondIteration - 1]=0;
+            pitsForOpposite[5 - (forSecondIteration - 1)] = 0;
+            pitsForActing[forSecondIteration - 1] = 0;
         }
 
         if (checkIfEndGame(acting, opposite)) {
@@ -397,8 +384,7 @@ public class GameServiceImpl implements GameService {
             opposite.setPitsForPlayer(pitsForOpposite);
             if (checkIfFirstIsTheWinner(acting, opposite)) {
                 findOne(gameId).setWinner(acting.getName());
-            }
-            else {
+            } else {
                 findOne(gameId).setWinner(opposite.getName());
             }
             return true;
@@ -410,23 +396,23 @@ public class GameServiceImpl implements GameService {
             return false;
         }
     }
-    public int makeFullMove (int number, Player acting, Player opposite, int times) {
 
-        int [] pitsForActing = acting.getPitsForPlayer();
-        int [] pitsForOpposite = opposite.getPitsForPlayer();
+    public int makeFullMove(int number, Player acting, Player opposite, int times) {
+
+        int[] pitsForActing = acting.getPitsForPlayer();
+        int[] pitsForOpposite = opposite.getPitsForPlayer();
         int selected = number - 1;
         int initial = pitsForActing[selected];
-        pitsForActing[selected]=0;
+        pitsForActing[selected] = 0;
         for (int i = 6, j = 0; i > 0; i--, j++) {
-            pitsForActing[j]=pitsForActing[j]+times;
+            pitsForActing[j] = pitsForActing[j] + times;
         }
         acting.setKalahForPlayer(acting.getKalahForPlayer() + times);
         for (int i = 6, j = 0; i > 0; i--, j++) {
-            pitsForOpposite[j] = pitsForOpposite[j]+times;
+            pitsForOpposite[j] = pitsForOpposite[j] + times;
         }
         acting.setPitsForPlayer(pitsForActing);
         opposite.setPitsForPlayer(pitsForOpposite);
         return initial;
     }
-
 }

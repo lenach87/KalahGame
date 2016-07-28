@@ -12,7 +12,7 @@ public class GameBuilder {
         model = new Game();
     }
 
-    public GameBuilder id (long id) {
+    public GameBuilder id(long id) {
         ReflectionTestUtils.setField(model, "id", id);
         return this;
     }

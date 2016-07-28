@@ -1,8 +1,5 @@
 package mykalah.data;
 
-/**
- * Created by o.chubukina on 28/07/2016.
- */
 public class GameForm {
     public GameForm() {}
 

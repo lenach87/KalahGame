@@ -15,7 +15,7 @@ public class Game implements Serializable {
     @Column(name = "GAME_ID")
     private long id;
 
-    @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Player initialFirstPlayer;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -38,7 +38,9 @@ public class Game implements Serializable {
         return numberOfPitForLastMove;
     }
 
-    public void setNumberOfPitForLastMove(int numberOfPitForLastMove) {this.numberOfPitForLastMove = numberOfPitForLastMove;}
+    public void setNumberOfPitForLastMove(int numberOfPitForLastMove) {
+        this.numberOfPitForLastMove = numberOfPitForLastMove;
+    }
 
     public boolean isAsFirst() {
         return asFirst;
@@ -72,6 +74,8 @@ public class Game implements Serializable {
         this.initialSecondPlayer = initialSecondPlayer;
     }
 
-    public String getWinner() { return winner; }
+    public String getWinner() {
+        return winner;
+    }
 
 }

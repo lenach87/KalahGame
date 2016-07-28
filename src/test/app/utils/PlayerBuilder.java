@@ -3,8 +3,6 @@ package utils;
 import mykalah.data.Player;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.List;
-
 public class PlayerBuilder {
 
     private Player model;
@@ -14,8 +12,7 @@ public class PlayerBuilder {
     }
 
 
-
-    public PlayerBuilder id (long id) {
+    public PlayerBuilder id(long id) {
         ReflectionTestUtils.setField(model, "id", id);
         return this;
     }

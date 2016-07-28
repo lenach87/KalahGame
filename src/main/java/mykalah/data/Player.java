@@ -8,14 +8,15 @@ import java.io.Serializable;
 public class Player implements Serializable {
     static final long serialVersionUID = 42L;
 
-    public Player() {}
+    public Player() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column (name = "PLAYER_ID")
+    @Column(name = "PLAYER_ID")
     private long id;
 
-    @Column (unique = true)
+    @Column(unique = true)
     private String name;
 
     private int[] pitsForPlayer;
@@ -49,11 +50,11 @@ public class Player implements Serializable {
         this.name = name;
     }
 
-    public int [] getPitsForPlayer() {
+    public int[] getPitsForPlayer() {
         return pitsForPlayer;
     }
 
-    public void setPitsForPlayer(int [] pitsForPlayer) {
+    public void setPitsForPlayer(int[] pitsForPlayer) {
         this.pitsForPlayer = pitsForPlayer;
     }
 
