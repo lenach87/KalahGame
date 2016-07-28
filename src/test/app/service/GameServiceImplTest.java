@@ -41,7 +41,6 @@ public class GameServiceImplTest {
     @Mock
     private PlayerService playerService;
 
-
     private Player actingPlayer;
     private Player oppositePlayer;
     private Game game;
@@ -70,8 +69,6 @@ public class GameServiceImplTest {
 
       when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
               .id(1)
-              .firstName("first")
-              .secondName("second")
               .initialFirstPlayer(actingPlayer)
               .initialSecondPlayer(oppositePlayer)
               .asFirst(true)
@@ -115,8 +112,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(true)
@@ -140,7 +135,6 @@ public class GameServiceImplTest {
         assertTrue(oppositePlayer.getPitsForPlayer()[5]==6);
         assertTrue(oppositePlayer.getKalahForPlayer()==0);
         assertTrue(actingPlayer.isInTurn());
-
     }
 
     @Test
@@ -162,8 +156,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(true)
@@ -207,8 +199,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(true)
@@ -253,8 +243,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(true)
@@ -299,8 +287,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(true)
@@ -344,8 +330,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(false)
@@ -389,8 +373,6 @@ public class GameServiceImplTest {
 
         when(gameRepository.findOne(anyLong())).thenReturn(game= new GameBuilder()
                 .id(1)
-                .firstName("first")
-                .secondName("second")
                 .initialFirstPlayer(actingPlayer)
                 .initialSecondPlayer(oppositePlayer)
                 .asFirst(true)

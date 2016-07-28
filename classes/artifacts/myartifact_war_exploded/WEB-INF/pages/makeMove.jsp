@@ -18,10 +18,10 @@
     </button>
     <c:choose>
       <c:when test="${makeMove.asFirst==true}">
-        <h2 class="sub-header">Acting player - ${makeMove.firstName}  </h2>
+        <h2 class="sub-header">Acting player - ${makeMove.initialFirstPlayer.name}  </h2>
       </c:when>
       <c:otherwise>
-        <h2 class="sub-header">Acting player - ${makeMove.secondName}  </h2>
+        <h2 class="sub-header">Acting player - ${makeMove.initialSecondPlayer.name}  </h2>
       </c:otherwise>
     </c:choose>
   </form:form>
@@ -44,7 +44,7 @@
 
       <tr>
         <td>
-          <b> Kalah for ${makeMove.secondName} </b>
+          <b> Kalah for ${makeMove.initialSecondPlayer.name} </b>
         </td>
         <td><b>#6</b></td>
         <td><b>#5</b></td>
@@ -106,7 +106,7 @@
         <td><b>#5</b></td>
         <td><b>#6</b></td>
         <td><b></b></td>
-        <td> <b> Kalah for ${makeMove.firstName} </b>
+        <td> <b> Kalah for ${makeMove.initialFirstPlayer.getName()} </b>
         </td>
       </tr>
 

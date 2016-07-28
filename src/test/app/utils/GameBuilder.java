@@ -42,16 +42,6 @@ public class GameBuilder {
         return this;
     }
 
-    public GameBuilder firstName(String firstName) {
-        ReflectionTestUtils.setField(model, "winner", firstName);
-        return this;
-    }
-
-    public GameBuilder secondName(String secondName) {
-        ReflectionTestUtils.setField(model, "winner", secondName);
-        return this;
-    }
-
     public Game build() {
         return model;
     }

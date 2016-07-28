@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
 @Service
 @Transactional(isolation= Isolation.SERIALIZABLE)
 public class GameServiceImpl implements GameService {
@@ -335,7 +334,8 @@ public class GameServiceImpl implements GameService {
                 findOne(gameId).setWinner(opposite.getName());
             }
             return true;
-        } else {
+        }
+        else {
             acting.setPitsForPlayer(pitsForActing);
             opposite.setPitsForPlayer(pitsForOpposite);
             acting.setInTurn(false);

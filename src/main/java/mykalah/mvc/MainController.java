@@ -29,14 +29,14 @@ public class MainController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String startPage(Model model) {
-        Game gameForm = new Game();
+        GameForm gameForm = new GameForm();
         model.addAttribute("playersForm", gameForm);
         return "index";
     }
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public RedirectView startGame(@ModelAttribute("playersForm") Game gameForm, RedirectAttributes redirectAttrs) {
+    public RedirectView startGame(@ModelAttribute("playersForm") GameForm gameForm, RedirectAttributes redirectAttrs) {
 
         Game game = gameService.makeGame(gameForm.getFirstName(), gameForm.getSecondName());
         redirectAttrs.addFlashAttribute("makeMove", game);
@@ -61,7 +61,7 @@ public class MainController {
         boolean result = gameService.makeMove(newGame.getId(), i);
         newGame = gameService.updateGame(newGame.getId(), i);
 
-        if (playerService.findPlayerByName(newGame.getFirstName()).isInTurn()) {
+        if (playerService.findPlayerByName(newGame.getInitialFirstPlayer().getName()).isInTurn()) {
             newGame.setAsFirst(true);
 
         }
