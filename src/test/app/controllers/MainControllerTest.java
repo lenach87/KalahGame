@@ -10,19 +10,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import utils.GameBuilder;
 
-import javax.servlet.ServletContext;
-
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -121,8 +116,6 @@ public class MainControllerTest {
             .andExpect(view().name("makeMove"))
             .andExpect(model().attribute("makeMove", Matchers.hasProperty("numberOfPitForLastMove", Matchers.equalTo("5"))))
             .andExpect(model().attribute("makeMove", Matchers.hasProperty("asFirst", Matchers.equalTo("false"))));
-
-
   }
 
 }

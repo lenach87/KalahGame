@@ -174,8 +174,9 @@ public class GameServiceImpl implements GameService {
         if (actingPlayer.getKalahForPlayer()>36) {
             return true;
         }
-        if (getStonesCountInPits(oppositePlayer)==0) {
+        if (getStonesCountInPits(oppositePlayer)==0||getStonesCountInPits(actingPlayer)==0) {
             actingPlayer.setKalahForPlayer(actingPlayer.getKalahForPlayer()+getStonesCountInPits(actingPlayer));
+            oppositePlayer.setKalahForPlayer(oppositePlayer.getKalahForPlayer()+getStonesCountInPits(oppositePlayer));
             return true;
         }
         else {

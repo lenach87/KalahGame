@@ -2,8 +2,7 @@ package mykalah.mvc;
 
 import mykalah.data.*;
 import mykalah.service.*;
-import org.apache.commons.logging.Log;
-import org.apache.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping("/")
 public class MainController {
-
-    Logger logger = Logger.getLogger(mykalah.mvc.MainController.class);
 
     private final PlayerService playerService;
     private final GameService gameService;
