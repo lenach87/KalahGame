@@ -312,7 +312,7 @@ public class GameServiceImplTest {
     }
 
     @Test
-    public void testMakeMoveMoreThatFullRound() {
+    public void testMakeMoveMoreThanFullRound() {
         actingPlayer = new PlayerBuilder()
                 .kalahForPlayer(22)
                 .pitsForPlayer(new int[]{0, 2, 3, 4, 3, 5})
@@ -381,6 +381,36 @@ public class GameServiceImplTest {
 
         gameService.makeMove(game.getId(), 3);
         assertTrue(actingPlayer.getKalahForPlayer() == 65);
+        assertTrue(game.getWinner() == "first");
+    }
+
+    @Test
+    public void testEndGameWhenPlayerHasMoreThan36StonesInKalah() {
+        actingPlayer = new PlayerBuilder()
+                .kalahForPlayer(36)
+                .pitsForPlayer(new int[]{10, 9, 1, 0, 10, 2})
+                .inTurn(true)
+                .name("first")
+                .build();
+        oppositePlayer = new PlayerBuilder()
+
+                .kalahForPlayer(7)
+                .pitsForPlayer(new int[]{0, 0, 13, 0, 0, 0})
+                .inTurn(false)
+                .name("second")
+                .build();
+
+        when(gameRepository.findOne(anyLong())).thenReturn(game = new GameBuilder()
+                .id(1)
+                .initialFirstPlayer(actingPlayer)
+                .initialSecondPlayer(oppositePlayer)
+                .asFirst(true)
+                .numberOfPitForLastMove(0)
+                .winner(null)
+                .build());
+
+        gameService.makeMove(game.getId(), 6);
+        assertTrue(actingPlayer.getKalahForPlayer() == 37);
         assertTrue(game.getWinner() == "first");
     }
 }
