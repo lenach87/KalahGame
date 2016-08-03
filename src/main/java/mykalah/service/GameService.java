@@ -19,7 +19,7 @@ public interface GameService {
 
     boolean checkIfEndGame(Player actingPlayer, Player oppositePlayer);
 
-    boolean checkIfFirstIsTheWinner(Player first, Player second);
+    int checkIfFirstIsTheWinner(Player first, Player second);
 
     boolean makeMoveEndActivePit(int number, Player acting, Player opposite, int times, int initial, long gameId);
 

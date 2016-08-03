@@ -135,10 +135,13 @@ public class GameServiceImpl implements GameService {
                     }
                 }
                 if (checkIfEndGame(acting, opposite)) {
-                    if (checkIfFirstIsTheWinner(acting, opposite)) {
+                    if (checkIfFirstIsTheWinner(acting, opposite) == 1) {
                         findOne(gameId).setWinner(acting.getName());
-                    } else {
+                    } else if (checkIfFirstIsTheWinner(acting, opposite) == -1) {
                         findOne(gameId).setWinner(opposite.getName());
+                    }
+                    else {
+                        findOne(gameId).setWinner("none");
                     }
                     return true;
                 } else {
@@ -182,8 +185,16 @@ public class GameServiceImpl implements GameService {
         }
     }
 
-    public boolean checkIfFirstIsTheWinner(Player first, Player second) {
-        return first.getKalahForPlayer() > second.getKalahForPlayer();
+    public int checkIfFirstIsTheWinner(Player first, Player second) {
+        if (first.getKalahForPlayer() > second.getKalahForPlayer()) {
+            return 1;
+        }
+        else if (first.getKalahForPlayer() < second.getKalahForPlayer()) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
     }
 
     public int getStonesCountInPits(Player player) {
@@ -222,10 +233,13 @@ public class GameServiceImpl implements GameService {
         if (checkIfEndGame(acting, opposite)) {
             acting.setPitsForPlayer(pitsForActing);
             opposite.setPitsForPlayer(pitsForOpposite);
-            if (checkIfFirstIsTheWinner(acting, opposite)) {
+            if (checkIfFirstIsTheWinner(acting, opposite) == 1) {
                 findOne(gameId).setWinner(acting.getName());
-            } else {
+            } else if (checkIfFirstIsTheWinner(acting, opposite) == -1) {
                 findOne(gameId).setWinner(opposite.getName());
+            }
+            else {
+                findOne(gameId).setWinner("none");
             }
             return true;
         } else {
@@ -265,10 +279,13 @@ public class GameServiceImpl implements GameService {
 
         if (checkIfEndGame(acting, opposite)) {
             acting.setPitsForPlayer(pitsForActing);
-            if (checkIfFirstIsTheWinner(acting, opposite)) {
+            if (checkIfFirstIsTheWinner(acting, opposite) == 1) {
                 findOne(gameId).setWinner(acting.getName());
-            } else {
+            } else if (checkIfFirstIsTheWinner(acting, opposite) == -1) {
                 findOne(gameId).setWinner(opposite.getName());
+            }
+            else {
+                findOne(gameId).setWinner("none");
             }
             return true;
 
@@ -316,10 +333,13 @@ public class GameServiceImpl implements GameService {
         if (checkIfEndGame(acting, opposite)) {
             acting.setPitsForPlayer(pitsForActing);
             opposite.setPitsForPlayer(pitsForOpposite);
-            if (checkIfFirstIsTheWinner(acting, opposite)) {
+            if (checkIfFirstIsTheWinner(acting, opposite) == 1) {
                 findOne(gameId).setWinner(acting.getName());
-            } else {
+            } else if (checkIfFirstIsTheWinner(acting, opposite) == -1) {
                 findOne(gameId).setWinner(opposite.getName());
+            }
+            else {
+                findOne(gameId).setWinner("none");
             }
             return true;
         } else {
@@ -382,10 +402,13 @@ public class GameServiceImpl implements GameService {
         if (checkIfEndGame(acting, opposite)) {
             acting.setPitsForPlayer(pitsForActing);
             opposite.setPitsForPlayer(pitsForOpposite);
-            if (checkIfFirstIsTheWinner(acting, opposite)) {
+            if (checkIfFirstIsTheWinner(acting, opposite) == 1) {
                 findOne(gameId).setWinner(acting.getName());
-            } else {
+            } else if (checkIfFirstIsTheWinner(acting, opposite) == -1) {
                 findOne(gameId).setWinner(opposite.getName());
+            }
+            else {
+                findOne(gameId).setWinner("none");
             }
             return true;
         } else {

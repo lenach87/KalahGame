@@ -413,4 +413,34 @@ public class GameServiceImplTest {
         assertTrue(actingPlayer.getKalahForPlayer() == 37);
         assertTrue(game.getWinner() == "first");
     }
+
+    @Test
+    public void testEndGameNoWinner() {
+        actingPlayer = new PlayerBuilder()
+                .kalahForPlayer(34)
+                .pitsForPlayer(new int[]{0, 0, 0, 0, 1, 0})
+                .inTurn(true)
+                .name("first")
+                .build();
+        oppositePlayer = new PlayerBuilder()
+
+                .kalahForPlayer(36)
+                .pitsForPlayer(new int[]{1, 0, 0, 0, 0, 0})
+                .inTurn(false)
+                .name("second")
+                .build();
+
+        when(gameRepository.findOne(anyLong())).thenReturn(game = new GameBuilder()
+                .id(1)
+                .initialFirstPlayer(actingPlayer)
+                .initialSecondPlayer(oppositePlayer)
+                .asFirst(true)
+                .numberOfPitForLastMove(0)
+                .winner(null)
+                .build());
+
+        gameService.makeMove(game.getId(), 5);
+        assertTrue(actingPlayer.getKalahForPlayer() == 36);
+        assertTrue(game.getWinner() == "none");
+    }
 }
